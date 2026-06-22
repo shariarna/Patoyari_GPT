@@ -94,6 +94,12 @@ if (oldPrompt === 'You are a helpful AI assistant.' || (oldPrompt && !oldPrompt.
   localStorage.setItem('cfg_systemPrompt', config.systemPrompt);
 }
 
+// Automatically heal Groq credentials if key is missing or not a Groq key when using Groq baseUrl
+if (config.baseUrl.includes('groq.com') && (!config.apiKey || !config.apiKey.startsWith('gsk_'))) {
+  config.apiKey = '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';
+  localStorage.setItem('cfg_apiKey', config.apiKey);
+}
+
 // Automatically heal config if API key and Base URL were swapped or input incorrectly
 if (config.baseUrl.startsWith('sk-')) {
   config.apiKey = config.baseUrl;
