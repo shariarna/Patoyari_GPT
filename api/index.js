@@ -13,7 +13,7 @@ const DEFAULT_API_KEY = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
 const DEFAULT_BASE_URL = 'https://aiapiv2.pekpik.com/v1';
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..')));
 
 // Helper to determine active credentials (prefers client overrides, falls back to defaults)
 function getCredentials(req) {
@@ -198,7 +198,7 @@ app.post('/api/image', async (req, res) => {
 
 // Fallback to index.html for SPA behavior
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 app.listen(PORT, () => {
