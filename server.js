@@ -171,16 +171,28 @@ app.post('/api/image', async (req, res) => {
       })
     });
 
-    const data = await apiResponse.json();
-    if (!apiResponse.ok) {
-      console.error(`RXZ.Ai Image error: ${apiResponse.status} -`, data);
-      return res.status(apiResponse.status).json(data);
+    let data;
+    try {
+      data = await apiResponse.json();
+    } catch (parseErr) {
+      // If parsing JSON fails, trigger fallback
+    }
+
+    if (!apiResponse.ok || !data || !data.data || !data.data[0]) {
+      console.warn(`DALL-E failed. Falling back to free image generation...`);
+      const fallbackUrl = `https://image.pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`;
+      return res.json({
+        data: [{ url: fallbackUrl }]
+      });
     }
 
     res.json(data);
   } catch (error) {
-    console.error('Proxy Error /api/image:', error);
-    res.status(500).json({ error: error.message || 'Internal Server Error' });
+    console.warn(`Image generation error: ${error.message}. Falling back to free image generation...`);
+    const fallbackUrl = `https://image.pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`;
+    res.json({
+      data: [{ url: fallbackUrl }]
+    });
   }
 });
 
