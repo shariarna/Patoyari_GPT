@@ -111,15 +111,9 @@ if (config.apiKey === 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw' || c
 }
 
 // Automatically migrate users from the decommissioned llama-3.3-70b-specdec model to llama-3.3-70b-versatile
-if (config.model === 'llama-3.3-70b-specdec') {
+if (config.model === 'llama-3.3-70b-specdec' || config.model !== 'llama-3.3-70b-versatile') {
   config.model = 'llama-3.3-70b-versatile';
   localStorage.setItem('cfg_model', config.model);
-}
-
-// Automatically migrate users from the non-functional gpt-5.5 model to smart-chat
-if (config.model === 'gpt-5.5') {
-  config.model = 'smart-chat';
-  localStorage.setItem('cfg_model', 'smart-chat');
 }
 
 // Initialize Application
