@@ -9,8 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Pre-configured default credentials
-const DEFAULT_API_KEY = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
-const DEFAULT_BASE_URL = 'https://aiapiv2.pekpik.com/v1';
+const DEFAULT_API_KEY = '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';
+const DEFAULT_BASE_URL = 'https://api.groq.com/openai/v1';
 
 app.use(express.json());
 
@@ -22,16 +22,16 @@ function getCredentials(req) {
   let apiKey = req.headers['x-api-key'] || DEFAULT_API_KEY;
   let baseUrl = req.headers['x-base-url'] || DEFAULT_BASE_URL;
 
-  // Server-side fallback: If client sent a Gemini key, override with PekPik default
-  if (apiKey && (apiKey.startsWith('AQ.') || apiKey.startsWith('AIzaSy'))) {
-    apiKey = DEFAULT_API_KEY;
-    baseUrl = DEFAULT_BASE_URL;
-  }
-
   // Clean base URL to remove trailing slashes
   if (baseUrl && baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
   }
+
+  // Automatic routing for Gemini keys
+  if (apiKey && apiKey.startsWith('AIzaSy') && (!baseUrl || baseUrl === DEFAULT_BASE_URL || baseUrl.includes('groq.com') || baseUrl.includes('pekpik.com'))) {
+    baseUrl = 'https://generativelanguage.googleapis.com/v1beta/openai';
+  }
+
   return { apiKey, baseUrl };
 }
 
@@ -54,9 +54,21 @@ app.post('/api/chat', async (req, res) => {
     }
   }
 
+  // Determine the final model based on the provider/baseUrl
+  let finalModel = model || 'llama-3.3-70b-versatile';
+  if (baseUrl.includes('api.groq.com')) {
+    if (finalModel === 'smart-chat' || finalModel.startsWith('gemini-') || finalModel.startsWith('gpt-') || finalModel === 'llama-3.3-70b-specdec') {
+      finalModel = 'llama-3.3-70b-versatile';
+    }
+  } else if (baseUrl.includes('generativelanguage.googleapis.com')) {
+    if (finalModel === 'smart-chat' || finalModel.startsWith('llama-') || finalModel.startsWith('gpt-')) {
+      finalModel = 'gemini-2.5-flash';
+    }
+  }
+
   try {
     const targetUrl = `${baseUrl}/chat/completions`;
-    console.log(`Forwarding chat to: ${targetUrl}`);
+    console.log(`Forwarding chat request to: ${targetUrl} (Model: ${finalModel})`);
 
     const apiResponse = await fetch(targetUrl, {
       method: 'POST',
@@ -65,7 +77,7 @@ app.post('/api/chat', async (req, res) => {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: model || 'smart-chat',
+        model: finalModel,
         messages: fullMessages,
         temperature: temperature ?? 0.7,
         max_tokens: max_tokens ?? 2048,

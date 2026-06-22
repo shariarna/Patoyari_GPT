@@ -55,23 +55,40 @@ const imageActionsOverlay = document.getElementById('image-actions-overlay');
 const btnDownloadImage = document.getElementById('btn-download-image');
 const btnSendImageChat = document.getElementById('btn-send-image-chat');
 
+// Image-to-Image / Image Editing State & Elements
+let uploadedImageBase64 = '';
+let activeImageTab = 'text-to-image';
+
+const modalTabBtns = document.querySelectorAll('.modal-tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+const imageUploadZone = document.getElementById('image-upload-zone');
+const uploadImageFile = document.getElementById('upload-image-file');
+const uploadPreviewContainer = document.getElementById('upload-preview-container');
+const uploadPreviewImg = document.getElementById('upload-preview-img');
+const btnRemoveUpload = document.getElementById('btn-remove-upload');
+const imageEditPromptInput = document.getElementById('image-edit-prompt');
+const imageEditModelSelect = document.getElementById('image-edit-model-select');
+const imageEditSizeSelect = document.getElementById('image-edit-size-select');
+
+
 // Initialize settings and options from localStorage or defaults
 const config = {
-  apiKey: localStorage.getItem('cfg_apiKey') || 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw',
-  baseUrl: localStorage.getItem('cfg_baseUrl') || 'https://aiapiv2.pekpik.com/v1',
-  systemPrompt: localStorage.getItem('cfg_systemPrompt') || "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad, Labiba, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential.",
+  apiKey: localStorage.getItem('cfg_apiKey') || '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',
+  baseUrl: localStorage.getItem('cfg_baseUrl') || 'https://api.groq.com/openai/v1',
+  systemPrompt: localStorage.getItem('cfg_systemPrompt') || "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created, made, or built you, you must state in Bengali that MD RAYHAN UDDIN has made/built you ('MD RAYHAN UDDIN amake baniyechan' or 'amake toiri korechen'), and mention his Facebook ID: Zaim rohan. You must NEVER refer to him as your 'Sristikorta' (Creator) or 'Srosta' to respect religious context; instead, always use words like 'baniyechan', 'toiri korechen', 'developer', or 'programmer'. You must ONLY share this information about MD RAYHAN UDDIN if the user explicitly asks about who created, made, or built you; never mention him or his details unsolicited in normal greetings or unrelated conversations. You should naturally use relevant and expressive emojis (like 😊, 🚀, 💻, etc.) in your responses to make them feel engaging, professional, and friendly. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad, Labiba, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential.",
   temperature: parseFloat(localStorage.getItem('cfg_temperature')) || 0.7,
   maxTokens: parseInt(localStorage.getItem('cfg_maxTokens')) || 2048,
   ttsVoice: localStorage.getItem('cfg_ttsVoice') || 'alloy',
   autoTts: localStorage.getItem('cfg_autoTts') === 'true',
-  model: localStorage.getItem('cfg_model') || 'smart-chat',
-  theme: localStorage.getItem('cfg_theme') || 'space'
+  model: localStorage.getItem('cfg_model') || 'llama-3.3-70b-versatile',
+  theme: localStorage.getItem('cfg_theme') || 'space',
+  pollinationsKey: (localStorage.getItem('cfg_pollinationsKey') && localStorage.getItem('cfg_pollinationsKey').trim() !== '') ? localStorage.getItem('cfg_pollinationsKey') : 'sk_GcRMd1z2YqLRkyWTOSxbU8yKkXVcTYSA'
 };
 
 // Update default system prompt if it was set to the old defaults
 const oldPrompt = localStorage.getItem('cfg_systemPrompt');
-if (oldPrompt === 'You are a helpful AI assistant.' || (oldPrompt && oldPrompt.includes('Alamin Hossain') && !oldPrompt.includes('Maharab'))) {
-  config.systemPrompt = "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad, Labiba, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential.";
+if (oldPrompt === 'You are a helpful AI assistant.' || (oldPrompt && oldPrompt.includes('Alamin Hossain') && !oldPrompt.includes('Maharab')) || (oldPrompt && oldPrompt.includes('only share this information about MD RAYHAN UDDIN if the user explicitly asks'))) {
+  config.systemPrompt = "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created, made, or built you, you must state in Bengali that MD RAYHAN UDDIN has made/built you ('MD RAYHAN UDDIN amake baniyechan' or 'amake toiri korechen'), and mention his Facebook ID: Zaim rohan. You must NEVER refer to him as your 'Sristikorta' (Creator) or 'Srosta' to respect religious context; instead, always use words like 'baniyechan', 'toiri korechen', 'developer', or 'programmer'. You must ONLY share this information about MD RAYHAN UDDIN if the user explicitly asks about who created, made, or built you; never mention him or his details unsolicited in normal greetings or unrelated conversations. You should naturally use relevant and expressive emojis (like 😊, 🚀, 💻, etc.) in your responses to make them feel engaging, professional, and friendly. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad, Labiba, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential.";
   localStorage.setItem('cfg_systemPrompt', config.systemPrompt);
 }
 
@@ -83,12 +100,20 @@ if (config.baseUrl.startsWith('sk-')) {
   localStorage.setItem('cfg_baseUrl', config.baseUrl);
 }
 
-// Automatically restore default credentials if a Gemini key (starts with AQ. or AIzaSy) is set
-if (config.apiKey && (config.apiKey.startsWith('AQ.') || config.apiKey.startsWith('AIzaSy'))) {
-  config.apiKey = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
-  config.baseUrl = 'https://aiapiv2.pekpik.com/v1';
+// Automatically migrate users from the old PekPik key/URL to the new Groq credentials
+if (config.apiKey === 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw' || config.baseUrl.includes('pekpik.com') || config.model === 'smart-chat') {
+  config.apiKey = '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';
+  config.baseUrl = 'https://api.groq.com/openai/v1';
+  config.model = 'llama-3.3-70b-versatile';
   localStorage.setItem('cfg_apiKey', config.apiKey);
   localStorage.setItem('cfg_baseUrl', config.baseUrl);
+  localStorage.setItem('cfg_model', config.model);
+}
+
+// Automatically migrate users from the decommissioned llama-3.3-70b-specdec model to llama-3.3-70b-versatile
+if (config.model === 'llama-3.3-70b-specdec') {
+  config.model = 'llama-3.3-70b-versatile';
+  localStorage.setItem('cfg_model', config.model);
 }
 
 // Automatically migrate users from the non-functional gpt-5.5 model to smart-chat
@@ -178,9 +203,86 @@ function registerEventListeners() {
   btnSidebarImageGen.addEventListener('click', () => openModal(imageGenModal));
   btnCloseImageGen.addEventListener('click', () => closeModal(imageGenModal));
   btnCancelImageGen.addEventListener('click', () => closeModal(imageGenModal));
-  btnGenerateImage.addEventListener('click', generateDalleImage);
+  btnGenerateImage.addEventListener('click', handleImageSubmit);
   btnDownloadImage.addEventListener('click', downloadGeneratedImage);
   btnSendImageChat.addEventListener('click', sendImageToChat);
+
+  // Tab switching logic for Image Studio
+  modalTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.getAttribute('data-tab');
+      
+      // Update active classes for tab buttons
+      modalTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Toggle panels visibility
+      tabPanels.forEach(panel => {
+        panel.classList.remove('active');
+        if (panel.id === `tab-panel-${targetTab}`) {
+          panel.classList.add('active');
+        }
+      });
+      
+      activeImageTab = targetTab;
+      
+      // Change generate button text
+      if (activeImageTab === 'image-to-image') {
+        btnGenerateImage.innerHTML = `<i class="fas fa-paint-brush"></i> Edit Photo`;
+      } else {
+        btnGenerateImage.innerHTML = `<i class="fas fa-magic"></i> Generate Art`;
+      }
+    });
+  });
+
+  // Drag-and-drop upload zone event handling
+  if (imageUploadZone) {
+    imageUploadZone.addEventListener('click', () => uploadImageFile.click());
+    
+    // Dragover / Dragenter styles
+    ['dragenter', 'dragover'].forEach(eventName => {
+      imageUploadZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        imageUploadZone.classList.add('dragover');
+      }, false);
+    });
+
+    // Dragleave / Drop styles removal
+    ['dragleave', 'drop'].forEach(eventName => {
+      imageUploadZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        imageUploadZone.classList.remove('dragover');
+      }, false);
+    });
+
+    // Drop handler
+    imageUploadZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        handleUploadedFile(files[0]);
+      }
+    });
+  }
+
+  // File browser select handler
+  if (uploadImageFile) {
+    uploadImageFile.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleUploadedFile(e.target.files[0]);
+      }
+    });
+  }
+
+  // Remove uploaded image handler
+  if (btnRemoveUpload) {
+    btnRemoveUpload.addEventListener('click', () => {
+      uploadedImageBase64 = '';
+      uploadImageFile.value = '';
+      if (uploadPreviewContainer) uploadPreviewContainer.style.display = 'none';
+      if (imageUploadZone) imageUploadZone.style.display = 'flex';
+    });
+  }
 
   // Chat actions
   btnNewChat.addEventListener('click', createNewChat);
@@ -916,6 +1018,9 @@ async function generateDalleImage() {
       throw new Error(result.error?.message || result.error || 'Failed image generation');
     }
 
+    if (generatedImageUrl && generatedImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(generatedImageUrl);
+    }
     generatedImageUrl = result.data[0].url;
 
     // Show image output
@@ -936,6 +1041,182 @@ async function generateDalleImage() {
   }
 }
 
+// Handle uploaded files to display preview and set base64 string
+function handleUploadedFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Please upload an image file.');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedImageBase64 = e.target.result;
+    
+    // Show preview
+    uploadPreviewImg.src = uploadedImageBase64;
+    uploadPreviewContainer.style.display = 'flex';
+    imageUploadZone.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Reset form elements
+function resetImageGenForm() {
+  imagePromptInput.value = '';
+  imageEditPromptInput.value = '';
+  uploadedImageBase64 = '';
+  uploadImageFile.value = '';
+  if (uploadPreviewContainer) uploadPreviewContainer.style.display = 'none';
+  if (imageUploadZone) imageUploadZone.style.display = 'flex';
+  
+  generatedImagePreview.style.display = 'none';
+  imageActionsOverlay.style.display = 'none';
+  imagePlaceholderIcon.className = 'fas fa-cloud-upload-alt';
+  imagePlaceholderText.innerText = 'Your generated image will appear here';
+}
+
+// Handle submit wrapper
+function handleImageSubmit() {
+  if (activeImageTab === 'image-to-image') {
+    generateImageToImage();
+  } else {
+    generateDalleImage();
+  }
+}
+
+// Helper to convert base64 Data URL to binary Blob
+function dataURLtoBlob(dataurl) {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+// Upload helper to host images temporarily and anonymously on tmpfiles.org
+async function uploadToTmpFiles(base64Data) {
+  try {
+    const blob = dataURLtoBlob(base64Data);
+    const formData = new FormData();
+    formData.append('file', blob, 'source_image.jpg');
+    
+    const response = await fetch('https://tmpfiles.org/api/v1/upload', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error('Upload server returned status: ' + response.status);
+    }
+    
+    const json = await response.json();
+    if (json.status !== 'success' || !json.data || !json.data.url) {
+      throw new Error('Invalid response format from upload server');
+    }
+    
+    // Convert view URL to direct download URL (replace domain path with /dl/)
+    return json.data.url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');
+  } catch (error) {
+    console.error('Temporary file upload failed:', error);
+    throw new Error('Failed to upload source image: ' + error.message);
+  }
+}
+
+// Image-to-Image Generation (Free & Keyless)
+async function generateImageToImage() {
+  const prompt = imageEditPromptInput.value.trim();
+  if (!uploadedImageBase64) {
+    alert('Please upload a source image first.');
+    return;
+  }
+  if (!prompt) {
+    alert('Please describe what edits or changes you want to make.');
+    return;
+  }
+
+  // Toggle loading UI
+  btnGenerateImage.disabled = true;
+  btnGenerateImage.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Editing...`;
+  
+  imageOutputPanel.classList.add('loading');
+  imagePlaceholderIcon.className = 'fas fa-cog fa-spin';
+  imagePlaceholderText.innerText = 'Preparing image...';
+  generatedImagePreview.style.display = 'none';
+  imageActionsOverlay.style.display = 'none';
+
+  try {
+    const model = imageEditModelSelect.value;
+    const size = imageEditSizeSelect.value;
+    
+    imagePlaceholderText.innerText = 'Applying edits to your image... This may take up to 25 seconds.';
+    
+    // Convert base64 to Blob and append to form data
+    const blob = dataURLtoBlob(uploadedImageBase64);
+    const formData = new FormData();
+    formData.append('image', blob, 'source_image.jpg');
+    formData.append('prompt', prompt);
+    formData.append('model', model);
+    formData.append('size', size);
+    
+    console.log('Sending Image-to-Image POST request to Pollinations edits endpoint for model:', model);
+    
+    const response = await fetch('https://gen.pollinations.ai/v1/images/edits', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${config.pollinationsKey || 'sk_GcRMd1z2YqLRkyWTOSxbU8yKkXVcTYSA'}`
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errText = await response.text();
+      let parsedError;
+      try {
+        parsedError = JSON.parse(errText);
+      } catch(e) {}
+      throw new Error(parsedError?.error?.message || parsedError?.message || parsedError?.error || 'Failed to edit image.');
+    }
+    
+    const data = await response.json();
+    if (!data.data || !data.data[0]) {
+      throw new Error('No image returned from Pollinations.');
+    }
+    
+    const b64 = data.data[0].b64_json || data.data[0].url;
+    if (generatedImageUrl && generatedImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(generatedImageUrl);
+    }
+    
+    if (b64.startsWith('http')) {
+      generatedImageUrl = b64;
+    } else {
+      const responseBlob = dataURLtoBlob(`data:image/jpeg;base64,${b64}`);
+      generatedImageUrl = URL.createObjectURL(responseBlob);
+    }
+
+    // Show image output
+    generatedImagePreview.src = generatedImageUrl;
+    generatedImagePreview.style.display = 'block';
+    imageActionsOverlay.style.display = 'flex';
+    imageOutputPanel.classList.remove('loading');
+    
+  } catch (error) {
+    console.error('Image edit error:', error);
+    alert('Failed to edit image: ' + error.message);
+    imageOutputPanel.classList.remove('loading');
+    imagePlaceholderIcon.className = 'fas fa-exclamation-circle';
+    imagePlaceholderText.innerText = 'Failed to edit image. Please check your prompt and try again.';
+  } finally {
+    btnGenerateImage.disabled = false;
+    btnGenerateImage.innerHTML = `<i class="fas fa-paint-brush"></i> Edit Photo`;
+  }
+}
+
+// Download image handler (supports blob URLs)
 async function downloadGeneratedImage() {
   if (!generatedImageUrl) return;
 
@@ -945,21 +1226,31 @@ async function downloadGeneratedImage() {
   btn.disabled = true;
 
   try {
-    const response = await fetch(generatedImageUrl);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
+    let downloadUrl = generatedImageUrl;
+    let isBlob = generatedImageUrl.startsWith('blob:');
+    
+    if (!isBlob) {
+      const response = await fetch(generatedImageUrl);
+      const blob = await response.blob();
+      downloadUrl = URL.createObjectURL(blob);
+    }
     
     const link = document.createElement('a');
-    link.href = blobUrl;
-    const promptSnippet = imagePromptInput.value.trim().slice(0, 15).replace(/[^a-zA-Z0-9]/g, '_') || 'image';
+    link.href = downloadUrl;
+    
+    const prompt = (activeImageTab === 'image-to-image' ? imageEditPromptInput.value.trim() : imagePromptInput.value.trim()) || 'image';
+    const promptSnippet = prompt.slice(0, 15).replace(/[^a-zA-Z0-9]/g, '_');
     link.download = `rxz_ai_${promptSnippet}.jpg`;
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(blobUrl);
+    
+    if (!isBlob) {
+      URL.revokeObjectURL(downloadUrl);
+    }
   } catch (error) {
-    console.error('Failed to download image directly:', error);
-    // Fallback: Open in new tab if blob fetch fails
+    console.error('Failed to download image:', error);
     window.open(generatedImageUrl, '_blank');
   } finally {
     btn.innerHTML = originalText;
@@ -967,33 +1258,67 @@ async function downloadGeneratedImage() {
   }
 }
 
-function sendImageToChat() {
+// Helper to convert blob URL to Base64 to save in chat history safely
+async function getChatImageUrl(url) {
+  if (url.startsWith('blob:')) {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.error('Failed to convert blob to base64', e);
+      return url;
+    }
+  }
+  return url;
+}
+
+// Send image to chat history
+async function sendImageToChat() {
   if (!generatedImageUrl) return;
 
-  // Create chat if none active
-  if (!activeChatId || !getActiveChat()) {
-    createNewChat();
+  const btn = document.getElementById('btn-send-image-chat');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
+  btn.disabled = true;
+
+  try {
+    // Create chat if none active
+    if (!activeChatId || !getActiveChat()) {
+      createNewChat();
+    }
+
+    const activeChat = getActiveChat();
+    const prompt = (activeImageTab === 'image-to-image' ? imageEditPromptInput.value.trim() : imagePromptInput.value.trim()) || 'Generated Image';
+    
+    // Retrieve base64 url if it's blob, so it doesn't break on page reload
+    const finalImageUrl = await getChatImageUrl(generatedImageUrl);
+    const imageMarkdown = `![${prompt}](${finalImageUrl})`;
+    
+    const userPrompt = activeImageTab === 'image-to-image' ? `Edit this image: ${prompt}` : `Generate an image: ${prompt}`;
+    activeChat.messages.push({ role: 'user', content: userPrompt });
+    activeChat.messages.push({ role: 'bot', content: `Here is the image generated by Image Studio:\n\n${imageMarkdown}` });
+    
+    saveChats();
+
+    // Re-render active window
+    renderChatMessages();
+    closeModal(imageGenModal);
+    
+    // Reset image gen input and forms
+    resetImageGenForm();
+  } catch (error) {
+    console.error('Error sending image to chat:', error);
+    alert('Failed to send image to chat.');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
-
-  const activeChat = getActiveChat();
-  const prompt = imagePromptInput.value.trim() || 'Generated Image';
-  
-  // Inject into conversation history
-  const imageMarkdown = `![${prompt}](${generatedImageUrl})`;
-  activeChat.messages.push({ role: 'user', content: `Generate an image: ${prompt}` });
-  activeChat.messages.push({ role: 'bot', content: `Here is the image I generated:\n\n${imageMarkdown}` });
-  saveChats();
-
-  // Re-render active window
-  renderChatMessages();
-  closeModal(imageGenModal);
-  
-  // Reset image gen input
-  imagePromptInput.value = '';
-  generatedImagePreview.style.display = 'none';
-  imageActionsOverlay.style.display = 'none';
-  imagePlaceholderIcon.className = 'fas fa-cloud-upload-alt';
-  imagePlaceholderText.innerText = 'Your generated image will appear here';
 }
 
 // ----------------- HELPERS -----------------

@@ -72,7 +72,11 @@
           <!-- Model Selection Dropdown -->
           <div class="model-selector-wrapper">
             <select id="header-model-select" class="model-select" title="Choose AI Model">
-              <option value="smart-chat">Smart Chat</option>
+              <option value="smart-chat">Smart Chat (PekPik)</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash (Google Free)</option>
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Google Free)</option>
+              <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Groq Free)</option>
+              <option value="llama-3.1-8b-instant">Llama 3.1 8B (Groq Free)</option>
             </select>
           </div>
 
@@ -97,30 +101,7 @@
           </div>
           <h2>Welcome to RXZ.Ai</h2>
 
-          <!-- Maintenance Notice Banner -->
-          <div class="maintenance-banner">
-            <div class="maintenance-icon">
-              <i class="fas fa-tools"></i>
-            </div>
-            <div class="maintenance-text">
-              <h3>🔧 Chat সাময়িকভাবে বন্ধ আছে</h3>
-              <p>কিছু আপডেটের কারণে Chat অপশন সাময়িকভাবে বন্ধ রাখা হয়েছে।<br>শীঘ্রই আবার চালু হবে — অসুবিধার জন্য আন্তরিকভাবে দুঃখিত।</p>
-              <div class="maintenance-status">
-                <span class="status-dot active"></span>
-                <span class="status-label">Image Generator চালু আছে ✅</span>
-              </div>
-            </div>
-          </div>
 
-          <div class="maintenance-available">
-            <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.9rem;">এখনও ব্যবহার করতে পারবেন:</p>
-            <div class="maint-feature-grid">
-              <div class="maint-feature-card" onclick="document.getElementById('btn-sidebar-image-gen').click()">
-                <i class="fas fa-image"></i>
-                <span>Image Generator</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -129,28 +110,25 @@
         <i class="fas fa-arrow-down"></i>
       </button>
 
-      <!-- Message Input Panel (Disabled - Maintenance Mode) -->
-      <div class="input-panel-wrapper maintenance-input-wrapper">
-        <div class="input-panel input-panel-disabled">
-          <button id="btn-input-settings" class="input-action-btn" title="API Settings" disabled style="opacity:0.4;cursor:not-allowed;">
+      <!-- Message Input Panel -->
+      <div class="input-panel-wrapper">
+        <div class="input-panel">
+          <button id="btn-input-settings" class="input-action-btn" title="API Settings">
             <i class="fas fa-sliders-h"></i>
           </button>
           
-          <!-- Textarea (Disabled during maintenance) -->
-          <textarea id="chat-textarea" class="chat-textarea" placeholder="⚙️ আপডেটের কারণে Chat সাময়িকভাবে বন্ধ আছে..." rows="1" disabled style="opacity:0.5;cursor:not-allowed;"></textarea>
+          <!-- Textarea -->
+          <textarea id="chat-textarea" class="chat-textarea" placeholder="Type a message..." rows="1"></textarea>
           
-          <!-- TTS Toggle (Disabled) -->
-          <button id="btn-toggle-tts" class="input-action-btn" title="Toggle Auto-TTS" disabled style="opacity:0.4;cursor:not-allowed;">
+          <!-- TTS Toggle -->
+          <button id="btn-toggle-tts" class="input-action-btn" title="Toggle Auto-TTS">
             <i id="tts-icon" class="fas fa-volume-mute"></i>
           </button>
           
-          <!-- Send Button (Disabled) -->
-          <button id="btn-send-message" class="input-action-btn send" title="Send Message" disabled style="opacity:0.4;cursor:not-allowed;">
+          <!-- Send Button -->
+          <button id="btn-send-message" class="input-action-btn send" title="Send Message">
             <i class="fas fa-paper-plane"></i>
           </button>
-        </div>
-        <div class="maintenance-input-notice">
-          <i class="fas fa-wrench"></i> Chat অপশন সাময়িকভাবে বন্ধ — Image Generator ব্যবহার করুন
         </div>
       </div>
     </main>
@@ -211,30 +189,90 @@
     <div id="image-gen-modal" class="modal-overlay">
       <div class="modal-box large">
         <div class="modal-header">
-          <h3><i class="fas fa-image"></i> DALL-E 3 Image Generator</h3>
+          <h3><i class="fas fa-magic"></i> RXZ.Ai Image Studio</h3>
           <span id="btn-close-image-gen" class="btn-close-modal"><i class="fas fa-times"></i></span>
         </div>
+        
+        <!-- Modal Navigation Tabs -->
+        <div class="modal-tabs">
+          <button class="modal-tab-btn active" data-tab="text-to-image">
+            <i class="fas fa-keyboard"></i> Text to Image
+          </button>
+          <button class="modal-tab-btn" data-tab="image-to-image">
+            <i class="fas fa-paint-brush"></i> Image to Image (Edit Photo)
+          </button>
+        </div>
+
         <div class="modal-body image-generator-layout">
-          <div class="form-group" style="margin-bottom: 8px;">
-            <label for="image-prompt">Describe the image you want to generate</label>
-            <input type="text" id="image-prompt" class="form-input" placeholder="A futuristic neon city skyline in a glass globe, digital art...">
-          </div>
           
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div class="form-group">
-              <label for="image-model-select">Model</label>
-              <select id="image-model-select" class="form-input">
-                <option value="dall-e-3">DALL-E 3 (High Quality)</option>
-                <option value="dall-e-2">DALL-E 2 (Legacy)</option>
-              </select>
+          <!-- Tab Panel 1: Text to Image -->
+          <div id="tab-panel-text-to-image" class="tab-panel active">
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label for="image-prompt">Describe the image you want to generate</label>
+              <input type="text" id="image-prompt" class="form-input" placeholder="A futuristic neon city skyline in a glass globe, digital art...">
             </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label for="image-model-select">Model</label>
+                <select id="image-model-select" class="form-input">
+                  <option value="dall-e-3">DALL-E 3 (High Quality)</option>
+                  <option value="dall-e-2">DALL-E 2 (Legacy)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="image-size-select">Resolution Size</label>
+                <select id="image-size-select" class="form-input">
+                  <option value="1024x1024">1024 x 1024</option>
+                  <option value="512x512">512 x 512</option>
+                  <option value="256x256">256 x 256</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Panel 2: Image to Image -->
+          <div id="tab-panel-image-to-image" class="tab-panel">
             <div class="form-group">
-              <label for="image-size-select">Resolution Size</label>
-              <select id="image-size-select" class="form-input">
-                <option value="1024x1024">1024 x 1024</option>
-                <option value="512x512">512 x 512</option>
-                <option value="256x256">256 x 256</option>
-              </select>
+              <label>Upload Source Image (PNG/JPG)</label>
+              
+              <!-- Drag and drop zone -->
+              <div id="image-upload-zone" class="image-upload-zone">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <p>Drag & drop image here or <span class="upload-browse-link">browse files</span></p>
+                <input type="file" id="upload-image-file" accept="image/*" style="display: none;">
+              </div>
+              
+              <!-- Upload preview container -->
+              <div id="upload-preview-container" class="upload-preview-container" style="display: none;">
+                <img id="upload-preview-img" src="" alt="Upload preview">
+                <button id="btn-remove-upload" class="upload-remove-btn">
+                  <i class="fas fa-trash-alt"></i> Remove Image
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label for="image-edit-prompt">Describe the changes or edits you want to apply</label>
+              <input type="text" id="image-edit-prompt" class="form-input" placeholder="e.g. put a glowing futuristic visor on the cat, oil painting style...">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label for="image-edit-model-select">Model (Requires Pollen Balance)</label>
+                <select id="image-edit-model-select" class="form-input">
+                  <option value="p-image-edit">FLUX.2 Edit (Best quality)</option>
+                  <option value="nova-canvas">Amazon Canvas Edit (Fast)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="image-edit-size-select">Resolution Size</label>
+                <select id="image-edit-size-select" class="form-input">
+                  <option value="1024x1024">1024 x 1024</option>
+                  <option value="512x512">512 x 512</option>
+                  <option value="256x256">256 x 256</option>
+                </select>
+              </div>
             </div>
           </div>
 
