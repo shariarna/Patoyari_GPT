@@ -1198,4 +1198,28 @@ body.theme-sakura .input-panel-wrapper { background: linear-gradient(180deg, rgb
   .input-panel-wrapper {
     padding: 0 12px 12px 12px;
   }
+
+  /* Prevent header crowding by hiding the redundant model selector on mobile */
+  .model-selector-wrapper {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Stack welcome prompts vertically on small mobile screens */
+  .quick-prompts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-screen h2 {
+    font-size: 20px;
+  }
+
+  .welcome-logo {
+    font-size: 36px;
+  }
+  
+  .message-content-wrapper {
+    max-width: 90%;
+  }
 }
