@@ -431,16 +431,19 @@ function showWelcomeScreen() {
 function renderChatMessages() {
   const activeChat = getActiveChat();
   if (!activeChat) return;
-
-  welcomeScreen.style.display = 'none';
   
   // Clear previous message rows
   const existingRows = messagesContainer.querySelectorAll('.message-row');
   existingRows.forEach(r => r.remove());
 
-  activeChat.messages.forEach(msg => {
-    appendMessageRowToContainer(msg.role, msg.content, false);
-  });
+  if (activeChat.messages.length === 0) {
+    welcomeScreen.style.display = 'flex';
+  } else {
+    welcomeScreen.style.display = 'none';
+    activeChat.messages.forEach(msg => {
+      appendMessageRowToContainer(msg.role, msg.content, false);
+    });
+  }
 
   // Make sure model switcher displays correct active chat model
   headerModelSelect.value = activeChat.model || config.model;
