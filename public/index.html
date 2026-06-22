@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RXZ.Ai Chat</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- PrismJS Syntax Highlighting Theme (Dark) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Custom CSS stylesheet -->
+  <link rel="stylesheet" href="style.css?v=1.0.3">
+</head>
+<body class="theme-space">
+  <div class="app-container">
+    
+    <!-- Collapsible Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <button id="btn-new-chat" class="btn-new-chat">
+          <i class="fas fa-plus"></i> New Chat
+        </button>
+        <button id="btn-close-sidebar-mobile" class="btn-toggle-sidebar-mobile" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Search in Chat History -->
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-history" class="search-input" placeholder="Search chats...">
+      </div>
+
+      <!-- Chat History Container -->
+      <div id="chat-history-list" class="chat-history-list">
+        <!-- Rendered dynamically in app.js -->
+      </div>
+
+      <!-- Sidebar Actions Footer -->
+      <div class="sidebar-footer">
+        <div id="btn-sidebar-image-gen" class="footer-btn">
+          <i class="fas fa-image"></i>
+          <span>DALL-E 3 Image Gen</span>
+        </div>
+        <div id="btn-sidebar-settings" class="footer-btn">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </div>
+        <div id="btn-clear-chats" class="footer-btn" style="color: #ef4444;">
+          <i class="fas fa-trash-alt"></i>
+          <span>Clear All Chats</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window Area -->
+    <main class="main-chat-container">
+      
+      <!-- Top Navigation Header -->
+      <header class="chat-header">
+        <div class="header-left">
+          <button id="btn-toggle-sidebar" class="btn-sidebar-toggle" title="Toggle Sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="app-title">RXZ.Ai</h1>
+        </div>
+
+        <div class="header-right">
+          <!-- Model Selection Dropdown -->
+          <div class="model-selector-wrapper">
+            <select id="header-model-select" class="model-select" title="Choose AI Model">
+              <option value="smart-chat">Smart Chat</option>
+            </select>
+          </div>
+
+          <!-- Color Theme Selection Dropdown -->
+          <div class="theme-picker-wrapper">
+            <select id="theme-select" class="theme-select" title="Choose Visual Theme">
+              <option value="space">🌌 Deep Space</option>
+              <option value="cyberpunk">⚡ Cyberpunk</option>
+              <option value="aurora">🌲 Aurora Forest</option>
+              <option value="sakura">🌸 Sakura Blossom</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <!-- Message History List / Welcome Screen -->
+      <section id="messages-container" class="messages-container">
+        <!-- Empty State / Welcome Screen -->
+        <div id="welcome-screen" class="welcome-screen">
+          <div class="welcome-logo">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h2>Welcome to RXZ.Ai</h2>
+
+          <!-- Maintenance Notice Banner -->
+          <div class="maintenance-banner">
+            <div class="maintenance-icon">
+              <i class="fas fa-tools"></i>
+            </div>
+            <div class="maintenance-text">
+              <h3>🔧 Chat সাময়িকভাবে বন্ধ আছে</h3>
+              <p>কিছু আপডেটের কারণে Chat অপশন সাময়িকভাবে বন্ধ রাখা হয়েছে।<br>শীঘ্রই আবার চালু হবে — অসুবিধার জন্য আন্তরিকভাবে দুঃখিত।</p>
+              <div class="maintenance-status">
+                <span class="status-dot active"></span>
+                <span class="status-label">Image Generator চালু আছে ✅</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="maintenance-available">
+            <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.9rem;">এখনও ব্যবহার করতে পারবেন:</p>
+            <div class="maint-feature-grid">
+              <div class="maint-feature-card" onclick="document.getElementById('btn-sidebar-image-gen').click()">
+                <i class="fas fa-image"></i>
+                <span>Image Generator</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Floating Scroll to Bottom Badge -->
+      <button id="btn-scroll-bottom" class="btn-scroll-bottom" title="Scroll to bottom">
+        <i class="fas fa-arrow-down"></i>
+      </button>
+
+      <!-- Message Input Panel (Disabled - Maintenance Mode) -->
+      <div class="input-panel-wrapper maintenance-input-wrapper">
+        <div class="input-panel input-panel-disabled">
+          <button id="btn-input-settings" class="input-action-btn" title="API Settings" disabled style="opacity:0.4;cursor:not-allowed;">
+            <i class="fas fa-sliders-h"></i>
+          </button>
+          
+          <!-- Textarea (Disabled during maintenance) -->
+          <textarea id="chat-textarea" class="chat-textarea" placeholder="⚙️ আপডেটের কারণে Chat সাময়িকভাবে বন্ধ আছে..." rows="1" disabled style="opacity:0.5;cursor:not-allowed;"></textarea>
+          
+          <!-- TTS Toggle (Disabled) -->
+          <button id="btn-toggle-tts" class="input-action-btn" title="Toggle Auto-TTS" disabled style="opacity:0.4;cursor:not-allowed;">
+            <i id="tts-icon" class="fas fa-volume-mute"></i>
+          </button>
+          
+          <!-- Send Button (Disabled) -->
+          <button id="btn-send-message" class="input-action-btn send" title="Send Message" disabled style="opacity:0.4;cursor:not-allowed;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+        <div class="maintenance-input-notice">
+          <i class="fas fa-wrench"></i> Chat অপশন সাময়িকভাবে বন্ধ — Image Generator ব্যবহার করুন
+        </div>
+      </div>
+    </main>
+
+    <!-- Modals Layout -->
+
+    <!-- 1. Settings Configuration Modal Overlay -->
+    <div id="settings-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3><i class="fas fa-cog"></i> AI Settings</h3>
+          <span id="btn-close-settings" class="btn-close-modal"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="settings-api-key">OpenAI-Compatible API Key</label>
+            <input type="password" id="settings-api-key" class="form-input" placeholder="sk-...">
+          </div>
+          <div class="form-group">
+            <label for="settings-base-url">Base API URL</label>
+            <input type="text" id="settings-base-url" class="form-input" placeholder="https://api.openai.com/v1">
+          </div>
+          <div class="form-group" style="display: none;">
+            <label for="settings-system-prompt">System Prompt / Role</label>
+            <textarea id="settings-system-prompt" class="form-input form-textarea" placeholder="You are a helpful AI assistant..."></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="settings-temperature">Temperature (0 - 2)</label>
+              <input type="number" id="settings-temperature" class="form-input" min="0" max="2" step="0.1" value="0.7">
+            </div>
+            <div class="form-group">
+              <label for="settings-max-tokens">Max Tokens</label>
+              <input type="number" id="settings-max-tokens" class="form-input" min="1" max="8192" value="2048">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="settings-tts-voice">Text-To-Speech (TTS) Voice</label>
+            <select id="settings-tts-voice" class="form-input">
+              <option value="alloy">Alloy (Balanced)</option>
+              <option value="echo">Echo (Warm)</option>
+              <option value="fable">Fable (Narrative)</option>
+              <option value="onyx">Onyx (Deep/Male)</option>
+              <option value="nova">Nova (Energetic/Female)</option>
+              <option value="shimmer">Shimmer (Professional/Female)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-reset-settings" class="btn-modal-action" style="background: #e11d48; color: white; border: none; border-radius: 6px; padding: 10px 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; margin-right: auto;">Reset Defaults</button>
+          <button id="btn-cancel-settings" class="btn-modal-action cancel">Cancel</button>
+          <button id="btn-save-settings" class="btn-modal-action save">Save Configurations</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Image Generator (DALL-E 3) Modal Overlay -->
+    <div id="image-gen-modal" class="modal-overlay">
+      <div class="modal-box large">
+        <div class="modal-header">
+          <h3><i class="fas fa-image"></i> DALL-E 3 Image Generator</h3>
+          <span id="btn-close-image-gen" class="btn-close-modal"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="modal-body image-generator-layout">
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label for="image-prompt">Describe the image you want to generate</label>
+            <input type="text" id="image-prompt" class="form-input" placeholder="A futuristic neon city skyline in a glass globe, digital art...">
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="image-model-select">Model</label>
+              <select id="image-model-select" class="form-input">
+                <option value="dall-e-3">DALL-E 3 (High Quality)</option>
+                <option value="dall-e-2">DALL-E 2 (Legacy)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="image-size-select">Resolution Size</label>
+              <select id="image-size-select" class="form-input">
+                <option value="1024x1024">1024 x 1024</option>
+                <option value="512x512">512 x 512</option>
+                <option value="256x256">256 x 256</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="image-output-panel" class="image-output-panel">
+            <div class="image-output-placeholder">
+              <i class="fas fa-cloud-upload-alt" id="image-placeholder-icon"></i>
+              <span id="image-placeholder-text">Your generated image will appear here</span>
+            </div>
+            <img id="generated-image-preview" src="" alt="Generated image preview" style="display: none;">
+            <div id="image-actions-overlay" class="image-actions-overlay" style="display: none;">
+              <button id="btn-download-image" class="image-action-overlay-btn"><i class="fas fa-download"></i> Save</button>
+              <button id="btn-send-image-chat" class="image-action-overlay-btn"><i class="fas fa-comment-dots"></i> Send to Chat</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-image-gen" class="btn-modal-action cancel">Close</button>
+          <button id="btn-generate-image" class="btn-modal-action save"><i class="fas fa-magic"></i> Generate Art</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Markdown Parser CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- PrismJS Core & Autoloader for syntax highlighting code blocks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <!-- Client-side App Logic JS -->
+  <script src="app.js?v=1.0.3"></script>
+</body>
+</html>
