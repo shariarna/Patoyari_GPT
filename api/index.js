@@ -207,8 +207,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`RXZ.Ai Server running at http://localhost:${PORT}`);
-});
+// Only start HTTP server locally (not in Vercel serverless environment)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`RXZ.Ai Server running at http://localhost:${PORT}`);
+  });
+}
 
 export default app;
