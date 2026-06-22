@@ -911,9 +911,34 @@ async function generateDalleImage() {
   }
 }
 
-function downloadGeneratedImage() {
-  if (generatedImageUrl) {
+async function downloadGeneratedImage() {
+  if (!generatedImageUrl) return;
+
+  const btn = document.getElementById('btn-download-image');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
+  btn.disabled = true;
+
+  try {
+    const response = await fetch(generatedImageUrl);
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    const promptSnippet = imagePromptInput.value.trim().slice(0, 15).replace(/[^a-zA-Z0-9]/g, '_') || 'image';
+    link.download = `rxz_ai_${promptSnippet}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error('Failed to download image directly:', error);
+    // Fallback: Open in new tab if blob fetch fails
     window.open(generatedImageUrl, '_blank');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
 }
 
