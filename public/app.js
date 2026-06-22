@@ -20,6 +20,7 @@ const welcomeScreen = document.getElementById('welcome-screen');
 const btnScrollBottom = document.getElementById('btn-scroll-bottom');
 const chatTextarea = document.getElementById('chat-textarea');
 const btnInputSettings = document.getElementById('btn-input-settings');
+const btnInputImageGen = document.getElementById('btn-input-image-gen');
 const btnToggleTts = document.getElementById('btn-toggle-tts');
 const ttsIcon = document.getElementById('tts-icon');
 const btnSendMessage = document.getElementById('btn-send-message');
@@ -195,6 +196,9 @@ function registerEventListeners() {
 
   // Image Gen triggers
   btnSidebarImageGen.addEventListener('click', () => openModal(imageGenModal));
+  if (btnInputImageGen) {
+    btnInputImageGen.addEventListener('click', () => openModal(imageGenModal));
+  }
   btnCloseImageGen.addEventListener('click', () => closeModal(imageGenModal));
   btnCancelImageGen.addEventListener('click', () => closeModal(imageGenModal));
   btnGenerateImage.addEventListener('click', handleImageSubmit);
