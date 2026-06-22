@@ -57,7 +57,7 @@ const btnSendImageChat = document.getElementById('btn-send-image-chat');
 
 // Initialize settings and options from localStorage or defaults
 const config = {
-  apiKey: localStorage.getItem('cfg_apiKey') || 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw',
+  apiKey: localStorage.getItem('cfg_apiKey') || 'sk-QMkokQfDmrbddi3yyWMQ1D6xR6wNxbqYVUvqsott83QwxK0e',
   baseUrl: localStorage.getItem('cfg_baseUrl') || 'https://aiapiv2.pekpik.com/v1',
   systemPrompt: localStorage.getItem('cfg_systemPrompt') || "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad, Labiba, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential.",
   temperature: parseFloat(localStorage.getItem('cfg_temperature')) || 0.7,
@@ -83,9 +83,9 @@ if (config.baseUrl.startsWith('sk-')) {
   localStorage.setItem('cfg_baseUrl', config.baseUrl);
 }
 
-// Automatically restore default credentials if a Gemini key (starts with AQ. or AIzaSy) is set
-if (config.apiKey && (config.apiKey.startsWith('AQ.') || config.apiKey.startsWith('AIzaSy'))) {
-  config.apiKey = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
+// Automatically restore default credentials if a Gemini key (starts with AQ. or AIzaSy) or the expired key is set
+if (config.apiKey === 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw' || (config.apiKey && (config.apiKey.startsWith('AQ.') || config.apiKey.startsWith('AIzaSy')))) {
+  config.apiKey = 'sk-QMkokQfDmrbddi3yyWMQ1D6xR6wNxbqYVUvqsott83QwxK0e';
   config.baseUrl = 'https://aiapiv2.pekpik.com/v1';
   localStorage.setItem('cfg_apiKey', config.apiKey);
   localStorage.setItem('cfg_baseUrl', config.baseUrl);
