@@ -69,8 +69,8 @@ app.post('/api/chat', async (req, res) => {
 
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
-      console.error(`Patoyari Ai API error: ${apiResponse.status} - ${errText}`);
-      return res.status(apiResponse.status).json({ error: errText || 'Error from Patoyari Ai API' });
+      console.error(`RXZ.Ai API error: ${apiResponse.status} - ${errText}`);
+      return res.status(apiResponse.status).json({ error: errText || 'Error from RXZ.Ai API' });
     }
 
     if (stream) {
@@ -125,8 +125,8 @@ app.post('/api/tts', async (req, res) => {
 
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
-      console.error(`Patoyari Ai TTS error: ${apiResponse.status} - ${errText}`);
-      return res.status(apiResponse.status).json({ error: errText || 'Error from Patoyari Ai TTS API' });
+      console.error(`RXZ.Ai TTS error: ${apiResponse.status} - ${errText}`);
+      return res.status(apiResponse.status).json({ error: errText || 'Error from RXZ.Ai TTS API' });
     }
 
     // Forward the binary audio stream back to the client
@@ -173,7 +173,7 @@ app.post('/api/image', async (req, res) => {
 
     const data = await apiResponse.json();
     if (!apiResponse.ok) {
-      console.error(`Patoyari Ai Image error: ${apiResponse.status} -`, data);
+      console.error(`RXZ.Ai Image error: ${apiResponse.status} -`, data);
       return res.status(apiResponse.status).json(data);
     }
 
@@ -190,7 +190,7 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Patoyari Ai Server running at http://localhost:${PORT}`);
+  console.log(`RXZ.Ai Server running at http://localhost:${PORT}`);
 });
 
 export default app;
