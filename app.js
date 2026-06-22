@@ -83,6 +83,14 @@ if (config.baseUrl.startsWith('sk-')) {
   localStorage.setItem('cfg_baseUrl', config.baseUrl);
 }
 
+// Automatically restore default credentials if a Gemini key (starts with AQ. or AIzaSy) is set
+if (config.apiKey && (config.apiKey.startsWith('AQ.') || config.apiKey.startsWith('AIzaSy'))) {
+  config.apiKey = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
+  config.baseUrl = 'https://aiapiv2.pekpik.com/v1';
+  localStorage.setItem('cfg_apiKey', config.apiKey);
+  localStorage.setItem('cfg_baseUrl', config.baseUrl);
+}
+
 // Automatically migrate users from the non-functional gpt-5.5 model to smart-chat
 if (config.model === 'gpt-5.5') {
   config.model = 'smart-chat';
