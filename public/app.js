@@ -39,6 +39,7 @@ const settingsSystemPrompt = document.getElementById('settings-system-prompt');
 const settingsTemperature = document.getElementById('settings-temperature');
 const settingsMaxTokens = document.getElementById('settings-max-tokens');
 const settingsTtsVoice = document.getElementById('settings-tts-voice');
+const settingsAppTheme = document.getElementById('settings-app-theme');
 
 // Image Gen Elements
 const imageGenModal = document.getElementById('image-gen-modal');
@@ -118,7 +119,7 @@ if (config.model === 'llama-3.3-70b-specdec' || config.model !== 'llama-3.3-70b-
 }
 
 // Automatically migrate users from deleted themes to the default 'space' theme
-if (config.theme !== 'space' && config.theme !== 'light') {
+if (config.theme !== 'space' && config.theme !== 'light' && config.theme !== 'cyberpunk' && config.theme !== 'aurora' && config.theme !== 'sakura') {
   config.theme = 'space';
   localStorage.setItem('cfg_theme', config.theme);
 }
@@ -135,12 +136,15 @@ function init() {
   loadChats();
 
   // Load settings into inputs
-  settingsApiKey.value = config.apiKey;
-  settingsBaseUrl.value = config.baseUrl;
-  settingsSystemPrompt.value = config.systemPrompt;
-  settingsTemperature.value = config.temperature;
-  settingsMaxTokens.value = config.maxTokens;
-  settingsTtsVoice.value = config.ttsVoice;
+  settingsApiKey.value = config.apiKey || '';
+  settingsBaseUrl.value = config.baseUrl || '';
+  settingsSystemPrompt.value = config.systemPrompt || '';
+  settingsTemperature.value = config.temperature || 0.7;
+  settingsMaxTokens.value = config.maxTokens || 2048;
+  settingsTtsVoice.value = config.ttsVoice || 'alloy';
+  if (settingsAppTheme) {
+    settingsAppTheme.value = config.theme;
+  }
 
   // Set initial model dropdown in header
   headerModelSelect.value = config.model;
@@ -308,6 +312,9 @@ function registerEventListeners() {
     config.theme = e.target.value;
     localStorage.setItem('cfg_theme', config.theme);
     applyTheme(config.theme);
+    if (settingsAppTheme) {
+      settingsAppTheme.value = config.theme;
+    }
   });
 
   // Textarea listeners
@@ -433,12 +440,19 @@ function scrollToBottom() {
 // ----------------- SETTINGS MANAGEMENT -----------------
 
 function saveSettings() {
-  config.apiKey = settingsApiKey.value.trim();
-  config.baseUrl = settingsBaseUrl.value.trim();
-  config.systemPrompt = settingsSystemPrompt.value.trim();
+  config.apiKey = settingsApiKey.value ? settingsApiKey.value.trim() : '';
+  config.baseUrl = settingsBaseUrl.value ? settingsBaseUrl.value.trim() : '';
+  config.systemPrompt = settingsSystemPrompt.value ? settingsSystemPrompt.value.trim() : '';
   config.temperature = parseFloat(settingsTemperature.value) || 0.7;
   config.maxTokens = parseInt(settingsMaxTokens.value) || 2048;
-  config.ttsVoice = settingsTtsVoice.value;
+  config.ttsVoice = settingsTtsVoice.value || 'alloy';
+
+  if (settingsAppTheme) {
+    config.theme = settingsAppTheme.value;
+    localStorage.setItem('cfg_theme', config.theme);
+    applyTheme(config.theme);
+    themeSelect.value = config.theme;
+  }
 
   localStorage.setItem('cfg_apiKey', config.apiKey);
   localStorage.setItem('cfg_baseUrl', config.baseUrl);

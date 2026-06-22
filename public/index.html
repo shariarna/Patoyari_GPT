@@ -82,7 +82,10 @@
           <!-- Color Theme Selection Dropdown -->
           <div class="theme-picker-wrapper">
             <select id="theme-select" class="theme-select" title="Choose Visual Theme">
-              <option value="space">🌙 Dark Theme</option>
+              <option value="space">🌌 Deep Space</option>
+              <option value="cyberpunk">⚡ Cyberpunk</option>
+              <option value="aurora">🌲 Aurora Forest</option>
+              <option value="sakura">🌸 Sakura Blossom</option>
               <option value="light">☀️ White Theme</option>
             </select>
           </div>
@@ -162,42 +165,37 @@
           <span id="btn-close-settings" class="btn-close-modal"><i class="fas fa-times"></i></span>
         </div>
         <div class="modal-body">
+          <!-- Simple Visible Theme Selection -->
           <div class="form-group">
-            <label for="settings-api-key">OpenAI-Compatible API Key</label>
-            <input type="password" id="settings-api-key" class="form-input" placeholder="sk-...">
+            <label for="settings-app-theme">Theme Mode</label>
+            <select id="settings-app-theme" class="form-input">
+              <option value="space">🌌 Deep Space</option>
+              <option value="cyberpunk">⚡ Cyberpunk</option>
+              <option value="aurora">🌲 Aurora Forest</option>
+              <option value="sakura">🌸 Sakura Blossom</option>
+              <option value="light">☀️ White Theme</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label for="settings-base-url">Base API URL</label>
-            <input type="text" id="settings-base-url" class="form-input" placeholder="https://api.openai.com/v1">
-          </div>
-          <div class="form-group" style="display: none;">
-            <label for="settings-system-prompt">System Prompt / Role</label>
-            <textarea id="settings-system-prompt" class="form-input form-textarea" placeholder="You are a helpful AI assistant..."></textarea>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div class="form-group">
-              <label for="settings-temperature">Temperature (0 - 2)</label>
-              <input type="number" id="settings-temperature" class="form-input" min="0" max="2" step="0.1" value="0.7">
-            </div>
-            <div class="form-group">
-              <label for="settings-max-tokens">Max Tokens</label>
-              <input type="number" id="settings-max-tokens" class="form-input" min="1" max="8192" value="2048">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="settings-tts-voice">Text-To-Speech (TTS) Voice</label>
-            <select id="settings-tts-voice" class="form-input">
-              <option value="alloy">Alloy (Balanced)</option>
-              <option value="echo">Echo (Warm)</option>
-              <option value="fable">Fable (Narrative)</option>
-              <option value="onyx">Onyx (Deep/Male)</option>
-              <option value="nova">Nova (Energetic/Female)</option>
-              <option value="shimmer">Shimmer (Professional/Female)</option>
+
+          <!-- Hidden complex settings (kept for JS compatibility) -->
+          <div style="display: none;">
+            <input type="password" id="settings-api-key">
+            <input type="text" id="settings-base-url">
+            <textarea id="settings-system-prompt"></textarea>
+            <input type="number" id="settings-temperature">
+            <input type="number" id="settings-max-tokens">
+            <select id="settings-tts-voice">
+              <option value="alloy">Alloy</option>
+              <option value="echo">Echo</option>
+              <option value="fable">Fable</option>
+              <option value="onyx">Onyx</option>
+              <option value="nova">Nova</option>
+              <option value="shimmer">Shimmer</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button id="btn-reset-settings" class="btn-modal-action" style="background: #e11d48; color: white; border: none; border-radius: 6px; padding: 10px 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; margin-right: auto;">Reset Defaults</button>
+          <button id="btn-reset-settings" class="btn-modal-action" style="background: #e11d48; color: white; border: none; border-radius: 6px; padding: 10px 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; margin-right: auto; display: none;">Reset Defaults</button>
           <button id="btn-cancel-settings" class="btn-modal-action cancel">Cancel</button>
           <button id="btn-save-settings" class="btn-modal-action save">Save Configurations</button>
         </div>
