@@ -17,9 +17,15 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // Helper to determine active credentials (prefers client overrides, falls back to defaults)
 function getCredentials(req) {
-  const apiKey = req.headers['x-api-key'] || DEFAULT_API_KEY;
+  let apiKey = req.headers['x-api-key'] || DEFAULT_API_KEY;
   let baseUrl = req.headers['x-base-url'] || DEFAULT_BASE_URL;
   
+  // Server-side fallback: If client sent a Gemini key (starts with AQ. or AIzaSy), override with PekPik default
+  if (apiKey && (apiKey.startsWith('AQ.') || apiKey.startsWith('AIzaSy'))) {
+    apiKey = DEFAULT_API_KEY;
+    baseUrl = DEFAULT_BASE_URL;
+  }
+
   // Clean base URL to remove trailing slashes
   if (baseUrl && baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
