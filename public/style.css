@@ -307,7 +307,7 @@ button, input, textarea, select {
 
 /* Chat Header */
 .chat-header {
-  height: 64px;
+  height: 72px;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
