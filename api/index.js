@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Pre-configured default credentials provided by the user
-const DEFAULT_API_KEY = 'sk-QMkokQfDmrbddi3yyWMQ1D6xR6wNxbqYVUvqsott83QwxK0e';
+const DEFAULT_API_KEY = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
 const DEFAULT_BASE_URL = 'https://aiapiv2.pekpik.com/v1';
 
 app.use(express.json());
@@ -20,8 +20,8 @@ function getCredentials(req) {
   let apiKey = req.headers['x-api-key'] || DEFAULT_API_KEY;
   let baseUrl = req.headers['x-base-url'] || DEFAULT_BASE_URL;
   
-  // Server-side fallback: If client sent a Gemini key or the expired old key, override with PekPik default
-  if (apiKey === 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw' || (apiKey && (apiKey.startsWith('AQ.') || apiKey.startsWith('AIzaSy')))) {
+  // Server-side fallback: If client sent a Gemini key, override with PekPik default
+  if (apiKey && (apiKey.startsWith('AQ.') || apiKey.startsWith('AIzaSy'))) {
     apiKey = DEFAULT_API_KEY;
     baseUrl = DEFAULT_BASE_URL;
   }
