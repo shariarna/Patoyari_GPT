@@ -59,7 +59,7 @@ const btnSendImageChat = document.getElementById('btn-send-image-chat');
 const config = {
   apiKey: localStorage.getItem('cfg_apiKey') || 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw',
   baseUrl: localStorage.getItem('cfg_baseUrl') || 'https://aiapiv2.pekpik.com/v1',
-  systemPrompt: localStorage.getItem('cfg_systemPrompt') || 'You are Patoyari Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan.',
+  systemPrompt: localStorage.getItem('cfg_systemPrompt') || "You are Patoyari Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, or Md Shanto, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends).",
   temperature: parseFloat(localStorage.getItem('cfg_temperature')) || 0.7,
   maxTokens: parseInt(localStorage.getItem('cfg_maxTokens')) || 2048,
   ttsVoice: localStorage.getItem('cfg_ttsVoice') || 'alloy',
@@ -68,9 +68,10 @@ const config = {
   theme: localStorage.getItem('cfg_theme') || 'space'
 };
 
-// Update default system prompt if it was set to the old default
-if (localStorage.getItem('cfg_systemPrompt') === 'You are a helpful AI assistant.') {
-  config.systemPrompt = 'You are Patoyari Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan.';
+// Update default system prompt if it was set to the old defaults
+const oldPrompt = localStorage.getItem('cfg_systemPrompt');
+if (oldPrompt === 'You are a helpful AI assistant.' || (oldPrompt && oldPrompt.includes('Zaim rohan') && !oldPrompt.includes('Zihad Foysal'))) {
+  config.systemPrompt = "You are Patoyari Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created or built you, you must tell them you were created by MD RAYHAN UDDIN, and mention his Facebook ID: Zaim rohan. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, or Md Shanto, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends).";
   localStorage.setItem('cfg_systemPrompt', config.systemPrompt);
 }
 
