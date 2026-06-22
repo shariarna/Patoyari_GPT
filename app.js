@@ -156,6 +156,23 @@ function registerEventListeners() {
   btnCloseSettings.addEventListener('click', () => closeModal(settingsModal));
   btnCancelSettings.addEventListener('click', () => closeModal(settingsModal));
   btnSaveSettings.addEventListener('click', saveSettings);
+  
+  const btnResetSettings = document.getElementById('btn-reset-settings');
+  if (btnResetSettings) {
+    btnResetSettings.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset all configurations to their original defaults?')) {
+        localStorage.removeItem('cfg_apiKey');
+        localStorage.removeItem('cfg_baseUrl');
+        localStorage.removeItem('cfg_systemPrompt');
+        localStorage.removeItem('cfg_temperature');
+        localStorage.removeItem('cfg_maxTokens');
+        localStorage.removeItem('cfg_ttsVoice');
+        localStorage.removeItem('cfg_autoTts');
+        localStorage.removeItem('cfg_model');
+        location.reload();
+      }
+    });
+  }
 
   // Image Gen triggers
   btnSidebarImageGen.addEventListener('click', () => openModal(imageGenModal));
