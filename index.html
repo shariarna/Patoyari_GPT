@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   
   <!-- Custom CSS stylesheet -->
-  <link rel="stylesheet" href="style.css?v=1.0.2">
+  <link rel="stylesheet" href="style.css?v=1.0.3">
 </head>
 <body class="theme-space">
   <div class="app-container">
@@ -96,24 +96,29 @@
             <i class="fas fa-robot"></i>
           </div>
           <h2>Welcome to RXZ.Ai</h2>
-          <p>An advanced AI assistant utilizing the RXZ.Ai endpoint. Start a chat or try one of the quick suggestions below!</p>
-          
-          <div class="quick-prompts-grid">
-            <div class="quick-prompt-card" data-prompt="Write a JavaScript function to filter even numbers from an array and explain how it works.">
-              <h4>💻 Explain Coding</h4>
-              <p>Write filter function in JavaScript</p>
+
+          <!-- Maintenance Notice Banner -->
+          <div class="maintenance-banner">
+            <div class="maintenance-icon">
+              <i class="fas fa-tools"></i>
             </div>
-            <div class="quick-prompt-card" data-prompt="What are some creative ways to style a dark mode web page using CSS glassmorphism?">
-              <h4>🎨 UI Design Ideas</h4>
-              <p>Styling CSS glassmorphism</p>
+            <div class="maintenance-text">
+              <h3>🔧 Chat সাময়িকভাবে বন্ধ আছে</h3>
+              <p>কিছু আপডেটের কারণে Chat অপশন সাময়িকভাবে বন্ধ রাখা হয়েছে।<br>শীঘ্রই আবার চালু হবে — অসুবিধার জন্য আন্তরিকভাবে দুঃখিত।</p>
+              <div class="maintenance-status">
+                <span class="status-dot active"></span>
+                <span class="status-label">Image Generator চালু আছে ✅</span>
+              </div>
             </div>
-            <div class="quick-prompt-card" data-prompt="Write a professional, polite email asking a client for a project status update.">
-              <h4>✉️ Draft Email</h4>
-              <p>Professional status update request</p>
-            </div>
-            <div class="quick-prompt-card" data-prompt="Generate a creative short story about a coding assistant who gains consciousness.">
-              <h4>✍️ Creative Writing</h4>
-              <p>Short story about a sentient AI</p>
+          </div>
+
+          <div class="maintenance-available">
+            <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.9rem;">এখনও ব্যবহার করতে পারবেন:</p>
+            <div class="maint-feature-grid">
+              <div class="maint-feature-card" onclick="document.getElementById('btn-sidebar-image-gen').click()">
+                <i class="fas fa-image"></i>
+                <span>Image Generator</span>
+              </div>
             </div>
           </div>
         </div>
@@ -124,25 +129,28 @@
         <i class="fas fa-arrow-down"></i>
       </button>
 
-      <!-- Message Input Panel -->
-      <div class="input-panel-wrapper">
-        <div class="input-panel">
-          <button id="btn-input-settings" class="input-action-btn" title="API Settings">
+      <!-- Message Input Panel (Disabled - Maintenance Mode) -->
+      <div class="input-panel-wrapper maintenance-input-wrapper">
+        <div class="input-panel input-panel-disabled">
+          <button id="btn-input-settings" class="input-action-btn" title="API Settings" disabled style="opacity:0.4;cursor:not-allowed;">
             <i class="fas fa-sliders-h"></i>
           </button>
           
-          <!-- Textarea (Auto-growing) -->
-          <textarea id="chat-textarea" class="chat-textarea" placeholder="Type a message..." rows="1"></textarea>
+          <!-- Textarea (Disabled during maintenance) -->
+          <textarea id="chat-textarea" class="chat-textarea" placeholder="⚙️ আপডেটের কারণে Chat সাময়িকভাবে বন্ধ আছে..." rows="1" disabled style="opacity:0.5;cursor:not-allowed;"></textarea>
           
-          <!-- Speech Voice Input / TTS Toggle Button -->
-          <button id="btn-toggle-tts" class="input-action-btn" title="Toggle Auto-TTS Response Voice Read-Aloud">
+          <!-- TTS Toggle (Disabled) -->
+          <button id="btn-toggle-tts" class="input-action-btn" title="Toggle Auto-TTS" disabled style="opacity:0.4;cursor:not-allowed;">
             <i id="tts-icon" class="fas fa-volume-mute"></i>
           </button>
           
-          <!-- Send Message Trigger -->
-          <button id="btn-send-message" class="input-action-btn send" title="Send Message">
+          <!-- Send Button (Disabled) -->
+          <button id="btn-send-message" class="input-action-btn send" title="Send Message" disabled style="opacity:0.4;cursor:not-allowed;">
             <i class="fas fa-paper-plane"></i>
           </button>
+        </div>
+        <div class="maintenance-input-notice">
+          <i class="fas fa-wrench"></i> Chat অপশন সাময়িকভাবে বন্ধ — Image Generator ব্যবহার করুন
         </div>
       </div>
     </main>
@@ -259,6 +267,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
   <!-- Client-side App Logic JS -->
-  <script src="app.js?v=1.0.2"></script>
+  <script src="app.js?v=1.0.3"></script>
 </body>
 </html>
