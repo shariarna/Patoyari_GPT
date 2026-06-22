@@ -143,7 +143,7 @@ function init() {
   settingsMaxTokens.value = config.maxTokens || 2048;
   settingsTtsVoice.value = config.ttsVoice || 'alloy';
   if (settingsAppTheme) {
-    settingsAppTheme.value = config.theme;
+    settingsAppTheme.value = config.theme === 'light' ? 'light' : 'space';
   }
 
   // Set initial model dropdown in header
@@ -313,7 +313,7 @@ function registerEventListeners() {
     localStorage.setItem('cfg_theme', config.theme);
     applyTheme(config.theme);
     if (settingsAppTheme) {
-      settingsAppTheme.value = config.theme;
+      settingsAppTheme.value = config.theme === 'light' ? 'light' : 'space';
     }
   });
 
