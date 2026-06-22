@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patoyari Ai Chat</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- PrismJS Syntax Highlighting Theme (Dark) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Custom CSS stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-space">
+  <div class="app-container">
+    
+    <!-- Collapsible Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <button id="btn-new-chat" class="btn-new-chat">
+          <i class="fas fa-plus"></i> New Chat
+        </button>
+        <button id="btn-close-sidebar-mobile" class="btn-toggle-sidebar-mobile" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Search in Chat History -->
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-history" class="search-input" placeholder="Search chats...">
+      </div>
+
+      <!-- Chat History Container -->
+      <div id="chat-history-list" class="chat-history-list">
+        <!-- Rendered dynamically in app.js -->
+      </div>
+
+      <!-- Sidebar Actions Footer -->
+      <div class="sidebar-footer">
+        <div id="btn-sidebar-image-gen" class="footer-btn">
+          <i class="fas fa-image"></i>
+          <span>DALL-E 3 Image Gen</span>
+        </div>
+        <div id="btn-sidebar-settings" class="footer-btn">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </div>
+        <div id="btn-clear-chats" class="footer-btn" style="color: #ef4444;">
+          <i class="fas fa-trash-alt"></i>
+          <span>Clear All Chats</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window Area -->
+    <main class="main-chat-container">
+      
+      <!-- Top Navigation Header -->
+      <header class="chat-header">
+        <div class="header-left">
+          <button id="btn-toggle-sidebar" class="btn-sidebar-toggle" title="Toggle Sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="app-title">Patoyari Ai</h1>
+        </div>
+
+        <div class="header-right">
+          <!-- Model Selection Dropdown -->
+          <div class="model-selector-wrapper">
+            <select id="header-model-select" class="model-select" title="Choose AI Model">
+              <option value="smart-chat">Smart Chat (Default)</option>
+              <option value="gpt-5.5">GPT 5.5</option>
+              <option value="gpt-4o">GPT 4o</option>
+              <option value="gpt-4-turbo">GPT 4 Turbo</option>
+              <option value="gpt-3.5-turbo">GPT 3.5 Turbo</option>
+            </select>
+          </div>
+
+          <!-- Color Theme Selection Dropdown -->
+          <div class="theme-picker-wrapper">
+            <select id="theme-select" class="theme-select" title="Choose Visual Theme">
+              <option value="space">🌌 Deep Space</option>
+              <option value="cyberpunk">⚡ Cyberpunk</option>
+              <option value="aurora">🌲 Aurora Forest</option>
+              <option value="sakura">🌸 Sakura Blossom</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <!-- Message History List / Welcome Screen -->
+      <section id="messages-container" class="messages-container">
+        <!-- Empty State / Welcome Screen -->
+        <div id="welcome-screen" class="welcome-screen">
+          <div class="welcome-logo">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h2>Welcome to Patoyari Ai</h2>
+          <p>An advanced AI assistant utilizing the Patoyari Ai endpoint. Start a chat or try one of the quick suggestions below!</p>
+          
+          <div class="quick-prompts-grid">
+            <div class="quick-prompt-card" data-prompt="Write a JavaScript function to filter even numbers from an array and explain how it works.">
+              <h4>💻 Explain Coding</h4>
+              <p>Write filter function in JavaScript</p>
+            </div>
+            <div class="quick-prompt-card" data-prompt="What are some creative ways to style a dark mode web page using CSS glassmorphism?">
+              <h4>🎨 UI Design Ideas</h4>
+              <p>Styling CSS glassmorphism</p>
+            </div>
+            <div class="quick-prompt-card" data-prompt="Write a professional, polite email asking a client for a project status update.">
+              <h4>✉️ Draft Email</h4>
+              <p>Professional status update request</p>
+            </div>
+            <div class="quick-prompt-card" data-prompt="Generate a creative short story about a coding assistant who gains consciousness.">
+              <h4>✍️ Creative Writing</h4>
+              <p>Short story about a sentient AI</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Floating Scroll to Bottom Badge -->
+      <button id="btn-scroll-bottom" class="btn-scroll-bottom" title="Scroll to bottom">
+        <i class="fas fa-arrow-down"></i>
+      </button>
+
+      <!-- Message Input Panel -->
+      <div class="input-panel-wrapper">
+        <div class="input-panel">
+          <button id="btn-input-settings" class="input-action-btn" title="API Settings">
+            <i class="fas fa-sliders-h"></i>
+          </button>
+          
+          <!-- Textarea (Auto-growing) -->
+          <textarea id="chat-textarea" class="chat-textarea" placeholder="Type a message..." rows="1"></textarea>
+          
+          <!-- Speech Voice Input / TTS Toggle Button -->
+          <button id="btn-toggle-tts" class="input-action-btn" title="Toggle Auto-TTS Response Voice Read-Aloud">
+            <i id="tts-icon" class="fas fa-volume-mute"></i>
+          </button>
+          
+          <!-- Send Message Trigger -->
+          <button id="btn-send-message" class="input-action-btn send" title="Send Message">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modals Layout -->
+
+    <!-- 1. Settings Configuration Modal Overlay -->
+    <div id="settings-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3><i class="fas fa-cog"></i> AI Settings</h3>
+          <span id="btn-close-settings" class="btn-close-modal"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="settings-api-key">OpenAI-Compatible API Key</label>
+            <input type="password" id="settings-api-key" class="form-input" placeholder="sk-...">
+          </div>
+          <div class="form-group">
+            <label for="settings-base-url">Base API URL</label>
+            <input type="text" id="settings-base-url" class="form-input" placeholder="https://api.openai.com/v1">
+          </div>
+          <div class="form-group">
+            <label for="settings-system-prompt">System Prompt / Role</label>
+            <textarea id="settings-system-prompt" class="form-input form-textarea" placeholder="You are a helpful AI assistant..."></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="settings-temperature">Temperature (0 - 2)</label>
+              <input type="number" id="settings-temperature" class="form-input" min="0" max="2" step="0.1" value="0.7">
+            </div>
+            <div class="form-group">
+              <label for="settings-max-tokens">Max Tokens</label>
+              <input type="number" id="settings-max-tokens" class="form-input" min="1" max="8192" value="2048">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="settings-tts-voice">Text-To-Speech (TTS) Voice</label>
+            <select id="settings-tts-voice" class="form-input">
+              <option value="alloy">Alloy (Balanced)</option>
+              <option value="echo">Echo (Warm)</option>
+              <option value="fable">Fable (Narrative)</option>
+              <option value="onyx">Onyx (Deep/Male)</option>
+              <option value="nova">Nova (Energetic/Female)</option>
+              <option value="shimmer">Shimmer (Professional/Female)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-settings" class="btn-modal-action cancel">Cancel</button>
+          <button id="btn-save-settings" class="btn-modal-action save">Save Configurations</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Image Generator (DALL-E 3) Modal Overlay -->
+    <div id="image-gen-modal" class="modal-overlay">
+      <div class="modal-box large">
+        <div class="modal-header">
+          <h3><i class="fas fa-image"></i> DALL-E 3 Image Generator</h3>
+          <span id="btn-close-image-gen" class="btn-close-modal"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="modal-body image-generator-layout">
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label for="image-prompt">Describe the image you want to generate</label>
+            <input type="text" id="image-prompt" class="form-input" placeholder="A futuristic neon city skyline in a glass globe, digital art...">
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="image-model-select">Model</label>
+              <select id="image-model-select" class="form-input">
+                <option value="dall-e-3">DALL-E 3 (High Quality)</option>
+                <option value="dall-e-2">DALL-E 2 (Legacy)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="image-size-select">Resolution Size</label>
+              <select id="image-size-select" class="form-input">
+                <option value="1024x1024">1024 x 1024</option>
+                <option value="512x512">512 x 512</option>
+                <option value="256x256">256 x 256</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="image-output-panel" class="image-output-panel">
+            <div class="image-output-placeholder">
+              <i class="fas fa-cloud-upload-alt" id="image-placeholder-icon"></i>
+              <span id="image-placeholder-text">Your generated image will appear here</span>
+            </div>
+            <img id="generated-image-preview" src="" alt="Generated image preview" style="display: none;">
+            <div id="image-actions-overlay" class="image-actions-overlay" style="display: none;">
+              <button id="btn-download-image" class="image-action-overlay-btn"><i class="fas fa-download"></i> Save</button>
+              <button id="btn-send-image-chat" class="image-action-overlay-btn"><i class="fas fa-comment-dots"></i> Send to Chat</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-image-gen" class="btn-modal-action cancel">Close</button>
+          <button id="btn-generate-image" class="btn-modal-action save"><i class="fas fa-magic"></i> Generate Art</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Markdown Parser CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- PrismJS Core & Autoloader for syntax highlighting code blocks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <!-- Client-side App Logic JS -->
+  <script src="app.js"></script>
+</body>
+</html>
