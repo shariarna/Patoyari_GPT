@@ -1,9 +1,4 @@
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,7 +8,6 @@ const DEFAULT_API_KEY = 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw';
 const DEFAULT_BASE_URL = 'https://aiapiv2.pekpik.com/v1';
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..')));
 
 // Helper to determine active credentials (prefers client overrides, falls back to defaults)
 function getCredentials(req) {
@@ -200,11 +194,6 @@ app.post('/api/image', async (req, res) => {
       data: [{ url: fallbackUrl }]
     });
   }
-});
-
-// Fallback to index.html for SPA behavior
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 // Only start HTTP server locally (not in Vercel serverless environment)
