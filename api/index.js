@@ -11,14 +11,92 @@ const PORT = process.env.PORT || 3000;
 
 const CONFIG_PATH = path.join(__dirname, 'server_config.json');
 let memoryConfig = null;
+const CLOUD_KV_APPKEY = 'ub9vdlhm';
+const CLOUD_KV_KEY = 'config';
 
-function loadServerConfig() {
-  if (memoryConfig) return memoryConfig;
+function encodeBase64(str) {
+  return Buffer.from(str, 'utf8').toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+function decodeBase64(str) {
+  let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+  return Buffer.from(base64, 'base64').toString('utf8');
+}
+
+async function fetchCloudConfig() {
+  try {
+    const url = `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${CLOUD_KV_APPKEY}/${CLOUD_KV_KEY}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const text = await res.text();
+      if (text) {
+        const rawVal = text.replace(/^"|"$/g, '').trim();
+        if (rawVal) {
+          const decoded = decodeBase64(rawVal);
+          const parsed = JSON.parse(decoded);
+          if (parsed && parsed.defaultApiKey && parsed.defaultBaseUrl) {
+            console.log('Successfully loaded config from Cloud KV.');
+            return parsed;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to fetch config from Cloud KV:', err.message);
+  }
+  return null;
+}
+
+async function saveCloudConfig(config) {
+  try {
+    const dataStr = JSON.stringify({
+      defaultApiKey: config.defaultApiKey,
+      defaultBaseUrl: config.defaultBaseUrl
+    });
+    const safeVal = encodeBase64(dataStr);
+    const url = `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${CLOUD_KV_APPKEY}/${CLOUD_KV_KEY}/${safeVal}`;
+    const res = await fetch(url, { method: 'POST', signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      console.log('Successfully saved config to Cloud KV.');
+    } else {
+      console.warn('Cloud KV save returned status:', res.status);
+    }
+  } catch (err) {
+    console.warn('Failed to save config to Cloud KV:', err.message);
+  }
+}
+
+async function loadServerConfig() {
+  if (memoryConfig && memoryConfig._lastFetched && (Date.now() - memoryConfig._lastFetched < 10000)) {
+    return memoryConfig;
+  }
+
+  const cloudConfig = await fetchCloudConfig();
+  if (cloudConfig) {
+    memoryConfig = {
+      adminUsername: 'admin',
+      adminPassword: 'adminpassword123',
+      defaultApiKey: cloudConfig.defaultApiKey,
+      defaultBaseUrl: cloudConfig.defaultBaseUrl,
+      _lastFetched: Date.now()
+    };
+    return memoryConfig;
+  }
 
   try {
     if (fs.existsSync(CONFIG_PATH)) {
       const data = fs.readFileSync(CONFIG_PATH, 'utf8');
-      memoryConfig = JSON.parse(data);
+      const localConfig = JSON.parse(data);
+      memoryConfig = {
+        ...localConfig,
+        _lastFetched: Date.now()
+      };
       return memoryConfig;
     }
   } catch (err) {
@@ -29,7 +107,8 @@ function loadServerConfig() {
     adminUsername: 'admin',
     adminPassword: 'adminpassword123',
     defaultApiKey: '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',
-    defaultBaseUrl: 'https://api.groq.com/openai/v1'
+    defaultBaseUrl: 'https://api.groq.com/openai/v1',
+    _lastFetched: Date.now()
   };
 
   saveServerConfig(memoryConfig);
@@ -37,22 +116,33 @@ function loadServerConfig() {
 }
 
 function saveServerConfig(config) {
-  memoryConfig = config;
+  memoryConfig = {
+    ...config,
+    _lastFetched: Date.now()
+  };
+  
+  saveCloudConfig(config);
+
   try {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify({
+      adminUsername: config.adminUsername,
+      adminPassword: config.adminPassword,
+      defaultApiKey: config.defaultApiKey,
+      defaultBaseUrl: config.defaultBaseUrl
+    }, null, 2), 'utf8');
   } catch (err) {
     console.warn('Could not write server_config.json to disk (expected in serverless environments):', err.message);
   }
 }
 
 // Initialize config on startup
-loadServerConfig();
+loadServerConfig().catch(err => console.error('Failed to initialize server config on startup:', err));
 
 app.use(express.json());
 
 // Helper to determine active credentials (prefers client overrides, falls back to defaults)
-function getCredentials(req) {
-  const currentConfig = loadServerConfig();
+async function getCredentials(req) {
+  const currentConfig = await loadServerConfig();
   let apiKey = req.headers['x-api-key'] || currentConfig.defaultApiKey;
   let baseUrl = req.headers['x-base-url'] || currentConfig.defaultBaseUrl;
   
@@ -66,7 +156,7 @@ function getCredentials(req) {
 // 1. Chat Completion Endpoint (handles streaming SSE or regular response)
 app.post('/api/chat', async (req, res) => {
   const { messages, model, temperature, max_tokens, stream, systemPrompt } = req.body;
-  const { apiKey, baseUrl } = getCredentials(req);
+  const { apiKey, baseUrl } = await getCredentials(req);
 
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: 'Messages array is required.' });
@@ -136,7 +226,7 @@ app.post('/api/chat', async (req, res) => {
 // 2. Text-to-Speech (TTS) Endpoint
 app.post('/api/tts', async (req, res) => {
   const { input, model, voice } = req.body;
-  const { apiKey, baseUrl } = getCredentials(req);
+  const { apiKey, baseUrl } = await getCredentials(req);
 
   if (!input) {
     return res.status(400).json({ error: 'Input text is required for TTS.' });
@@ -183,7 +273,7 @@ app.post('/api/tts', async (req, res) => {
 // 3. Image Generation (DALL-E 3) Endpoint
 app.post('/api/image', async (req, res) => {
   const { prompt, model, size } = req.body;
-  const { apiKey, baseUrl } = getCredentials(req);
+  const { apiKey, baseUrl } = await getCredentials(req);
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt text is required for Image Generation.' });
@@ -233,9 +323,9 @@ app.post('/api/image', async (req, res) => {
 });
 
 // Admin login and config endpoints
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
-  const currentConfig = loadServerConfig();
+  const currentConfig = await loadServerConfig();
 
   if (username === currentConfig.adminUsername && password === currentConfig.adminPassword) {
     const token = Buffer.from(`${username}:${password}`).toString('base64');
@@ -245,37 +335,37 @@ app.post('/api/admin/login', (req, res) => {
   return res.status(401).json({ error: 'Invalid admin username or password.' });
 });
 
-function validateAdminToken(req) {
+async function validateAdminToken(req) {
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return false;
   }
   const token = authHeader.split(' ')[1];
-  const currentConfig = loadServerConfig();
+  const currentConfig = await loadServerConfig();
   const expectedToken = Buffer.from(`${currentConfig.adminUsername}:${currentConfig.adminPassword}`).toString('base64');
   return token === expectedToken;
 }
 
-app.get('/api/admin/config', (req, res) => {
-  if (!validateAdminToken(req)) {
+app.get('/api/admin/config', async (req, res) => {
+  if (!await validateAdminToken(req)) {
     return res.status(403).json({ error: 'Access denied.' });
   }
-  const currentConfig = loadServerConfig();
+  const currentConfig = await loadServerConfig();
   res.json({
     defaultApiKey: currentConfig.defaultApiKey,
     defaultBaseUrl: currentConfig.defaultBaseUrl
   });
 });
 
-app.post('/api/admin/config', (req, res) => {
-  if (!validateAdminToken(req)) {
+app.post('/api/admin/config', async (req, res) => {
+  if (!await validateAdminToken(req)) {
     return res.status(403).json({ error: 'Access denied.' });
   }
   const { apiKey, baseUrl } = req.body;
   if (!apiKey || !baseUrl) {
     return res.status(400).json({ error: 'API Key and Base URL are required.' });
   }
-  const currentConfig = loadServerConfig();
+  const currentConfig = await loadServerConfig();
   currentConfig.defaultApiKey = apiKey;
   currentConfig.defaultBaseUrl = baseUrl;
   saveServerConfig(currentConfig);
