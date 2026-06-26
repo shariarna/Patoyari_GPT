@@ -111,17 +111,17 @@ async function loadServerConfig() {
     _lastFetched: Date.now()
   };
 
-  saveServerConfig(memoryConfig);
+  await saveServerConfig(memoryConfig);
   return memoryConfig;
 }
 
-function saveServerConfig(config) {
+async function saveServerConfig(config) {
   memoryConfig = {
     ...config,
     _lastFetched: Date.now()
   };
   
-  saveCloudConfig(config);
+  await saveCloudConfig(config);
 
   try {
     fs.writeFileSync(CONFIG_PATH, JSON.stringify({
@@ -372,7 +372,7 @@ app.post('/api/admin/config', async (req, res) => {
   const currentConfig = await loadServerConfig();
   currentConfig.defaultApiKey = apiKey;
   currentConfig.defaultBaseUrl = baseUrl;
-  saveServerConfig(currentConfig);
+  await saveServerConfig(currentConfig);
   res.json({ success: true });
 });
 
