@@ -5,3 +5,6 @@ node_modules
 scratch/
 server_config.json
 
+
+.vercel
+.env*
