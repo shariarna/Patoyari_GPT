@@ -83,7 +83,7 @@ const config = {
   ttsVoice: localStorage.getItem('cfg_ttsVoice') || 'alloy',
   autoTts: localStorage.getItem('cfg_autoTts') === 'true',
   model: localStorage.getItem('cfg_model') || 'llama-3.3-70b-versatile',
-  theme: localStorage.getItem('cfg_theme') || 'space',
+  theme: localStorage.getItem('cfg_theme') || 'glass',
   pollinationsKey: (localStorage.getItem('cfg_pollinationsKey') && localStorage.getItem('cfg_pollinationsKey').trim() !== '') ? localStorage.getItem('cfg_pollinationsKey') : 'sk_GcRMd1z2YqLRkyWTOSxbU8yKkXVcTYSA'
 };
 
@@ -116,7 +116,7 @@ if (config.model === 'llama-3.3-70b-specdec' || config.model !== 'llama-3.3-70b-
 
 // Automatically migrate users from deleted themes to the default 'space' theme
 if (config.theme !== 'space' && config.theme !== 'light' && config.theme !== 'cyberpunk' && config.theme !== 'aurora' && config.theme !== 'sakura' && config.theme !== 'glass') {
-  config.theme = 'space';
+  config.theme = 'glass';
   localStorage.setItem('cfg_theme', config.theme);
 }
 
