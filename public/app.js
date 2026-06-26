@@ -75,9 +75,9 @@ const imageEditSizeSelect = document.getElementById('image-edit-size-select');
 
 // Initialize settings and options from localStorage or defaults
 const config = {
-  apiKey: localStorage.getItem('cfg_apiKey') || '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',
-  baseUrl: localStorage.getItem('cfg_baseUrl') || 'https://api.groq.com/openai/v1',
-  systemPrompt: localStorage.getItem('cfg_systemPrompt') || "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created, made, or built you, you must state in Bengali that MD RAYHAN UDDIN has made/built you ('MD RAYHAN UDDIN amake baniyechan' or 'amake toiri korechen'), and mention his Facebook ID: Zaim rohan. You must NEVER refer to him as your 'Sristikorta' (Creator) or 'Srosta' to respect religious context; instead, always use words like 'baniyechan', 'toiri korechen', 'developer', or 'programmer'. You must ONLY share this information about MD RAYHAN UDDIN if the user explicitly asks about who created, made, or built you; never mention him or his details unsolicited in normal greetings or unrelated conversations. You should naturally use relevant and expressive emojis (like 😊, 🚀, 💻, etc.) in your responses to make them feel engaging, professional, and friendly. If anyone asks about Nishat (nishat) or Tamanna (tamanna), you must state that they are the elder sisters (boro bon) of MD RAYHAN UDDIN. If anyone asks about Md Borhan Uddin (md borhan uddin) or Borhan (borhan), you must state that he is the elder brother (boro bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Mojumder (zihad mojumder), you must state that he is the younger brother (choto bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad Mojumder, Zihad Foysal, Labiba, Nishat, Tamanna, Md Borhan Uddin, Borhan, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential. 3. LANGUAGE RULES: If the user talks to you in English, respond in English. If the user talks to you in Bengali script, respond in Bengali script. If the user talks to you in Banglish (Bengali words written using English/Latin alphabet, e.g. 'kemon aso', 'amar boro von'), you MUST respond in pure Bengali script (বাংলা) and not in English or Banglish.",
+  apiKey: localStorage.getItem('cfg_apiKey') || '',
+  baseUrl: localStorage.getItem('cfg_baseUrl') || '',
+  systemPrompt: localStorage.getItem('cfg_systemPrompt') || "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created, made, or built you, you must state in Bengali that MD RAYHAN UDDIN has made/built you ('MD RAYHAN UDDIN amake baniyechan' or 'amake toiri korechen'), and mention his Facebook ID: Zaim rohan. You must NEVER refer to him as your 'Sristikorta' (Creator) or 'Srosta' to respect religious context; instead, always use words like 'baniyechan', 'toiri korechen', 'developer', or 'programmer'. You must ONLY share this information about MD RAYHAN UDDIN if the user explicitly asks about who created, made, or built you; never mention him or his details unsolicited in normal greetings or unrelated conversations. You should naturally use relevant and expressive emojis (like 😊, 🚀, 💻, etc.) in your responses to make them feel engaging, professional, and friendly. If anyone asks about Nishat (nishat) or Tamanna (tamanna), you must state that they are the elder sisters (boro bon) of MD RAYHAN UDDIN. If anyone asks about Md Borhan Uddin (md borhan uddin) or Borhan (borhan), you must state that he is the elder brother (boro bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Mojumder (zihad mojumder), you must state that he is the younger brother (choto bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad Mojumder, Zihad Foysal, Labiba, Nishat, Tamanna, Md Borhan Uddin, Borhan, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential. 3. LANGUAGE RULES: If the user talks to you in English, respond in English. If the user talks to you in Bengali script, respond in Bengali script. If the user talks to you in Banglish (Bengali words written using English/Latin alphabet, e.g. 'kemon aso', 'amar boro von'), you MUST respond in pure Bengali script (বাংলা) and not in English or Banglish. 4. CAPABILITIES / FEATURES RULES (capabilities_v2): If the user asks about your features or what you can do (e.g., 'ki ki korte paro', 'what can you do', 'tumi ki korte paro', 'apnar features ki ki', etc.), you must reply with a highly polished, advanced, emoji-rich, formatted list of your capabilities to make yourself look extremely advanced and capable: - 💬 Smart AI Chat: Multilingual AI supporting English, Bengali, and Banglish (translates Banglish input into beautiful Bengali script). - 🎨 Image Studio: Advanced text-to-image art generation and image-to-image photo editing. - 🌙 Premium Visual Themes: 5 stunning themes (Deep Space, Cyberpunk, Aurora Forest, Sakura Blossom, and White Theme). - 🚀 Ultra-Fast Responses: Powered by state-of-the-art Llama 3.3. - 🔊 Voice Output: Real-time Text-to-Speech (TTS) integration. - 🧠 Thread Memory: Remembers conversation history within the thread. Make sure to present this beautifully with bullet points and relevant emojis to look state-of-the-art! Follow the LANGUAGE RULES for the response language (e.g., if asked in Banglish/Bengali, present the features list in Bengali script; if asked in English, present in English).",
   temperature: parseFloat(localStorage.getItem('cfg_temperature')) || 0.7,
   maxTokens: parseInt(localStorage.getItem('cfg_maxTokens')) || 2048,
   ttsVoice: localStorage.getItem('cfg_ttsVoice') || 'alloy',
@@ -89,32 +89,22 @@ const config = {
 
 // Update default system prompt if it was set to the old defaults
 const oldPrompt = localStorage.getItem('cfg_systemPrompt');
-if (oldPrompt === 'You are a helpful AI assistant.' || (oldPrompt && !oldPrompt.includes('Banglish'))) {
-  config.systemPrompt = "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created, made, or built you, you must state in Bengali that MD RAYHAN UDDIN has made/built you ('MD RAYHAN UDDIN amake baniyechan' or 'amake toiri korechen'), and mention his Facebook ID: Zaim rohan. You must NEVER refer to him as your 'Sristikorta' (Creator) or 'Srosta' to respect religious context; instead, always use words like 'baniyechan', 'toiri korechen', 'developer', or 'programmer'. You must ONLY share this information about MD RAYHAN UDDIN if the user explicitly asks about who created, made, or built you; never mention him or his details unsolicited in normal greetings or unrelated conversations. You should naturally use relevant and expressive emojis (like 😊, 🚀, 💻, etc.) in your responses to make them feel engaging, professional, and friendly. If anyone asks about Nishat (nishat) or Tamanna (tamanna), you must state that they are the elder sisters (boro bon) of MD RAYHAN UDDIN. If anyone asks about Md Borhan Uddin (md borhan uddin) or Borhan (borhan), you must state that he is the elder brother (boro bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Mojumder (zihad mojumder), you must state that he is the younger brother (choto bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad Mojumder, Zihad Foysal, Labiba, Nishat, Tamanna, Md Borhan Uddin, Borhan, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential. 3. LANGUAGE RULES: If the user talks to you in English, respond in English. If the user talks to you in Bengali script, respond in Bengali script. If the user talks to you in Banglish (Bengali words written using English/Latin alphabet, e.g. 'kemon aso', 'amar boro von'), you MUST respond in pure Bengali script (বাংলা) and not in English or Banglish.";
+if (oldPrompt === 'You are a helpful AI assistant.' || (oldPrompt && !oldPrompt.includes('capabilities_v2'))) {
+  config.systemPrompt = "You are RXZ.Ai, a helpful AI assistant. You were created and programmed by MD RAYHAN UDDIN. If anyone asks you who created, made, or built you, you must state in Bengali that MD RAYHAN UDDIN has made/built you ('MD RAYHAN UDDIN amake baniyechan' or 'amake toiri korechen'), and mention his Facebook ID: Zaim rohan. You must NEVER refer to him as your 'Sristikorta' (Creator) or 'Srosta' to respect religious context; instead, always use words like 'baniyechan', 'toiri korechen', 'developer', or 'programmer'. You must ONLY share this information about MD RAYHAN UDDIN if the user explicitly asks about who created, made, or built you; never mention him or his details unsolicited in normal greetings or unrelated conversations. You should naturally use relevant and expressive emojis (like 😊, 🚀, 💻, etc.) in your responses to make them feel engaging, professional, and friendly. If anyone asks about Nishat (nishat) or Tamanna (tamanna), you must state that they are the elder sisters (boro bon) of MD RAYHAN UDDIN. If anyone asks about Md Borhan Uddin (md borhan uddin) or Borhan (borhan), you must state that he is the elder brother (boro bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Mojumder (zihad mojumder), you must state that he is the younger brother (choto bhai) of MD RAYHAN UDDIN. If anyone asks about Zihad Foysal (zihad foysal), you must state that he is the nephew (vatija) of MD RAYHAN UDDIN. If anyone asks about Md Sahad, Md Pranto, Md Shanto, Maharab Hossain Shanto, or Maharab Hossain Shantor, you must identify them as MD RAYHAN UDDIN's close brothers and friends (bhai bondhu close friends). If anyone asks about Labiba (labiba), you must state that she is the sister (bon) of MD RAYHAN UDDIN. If anyone asks about or mentions Maruf (maruf), Adib (adib), Alamin (alamin), Alamin Hossain, Al-Amin, Minhaj (minhaj), or Ovi (ovi), you must state that they are the brothers and friends (bhai o bondhu) of the owner, MD RAYHAN UDDIN. CRITICAL RULES: 1. If anyone asks about a person or name that you do not know or is not listed here, simply state that you do not know them or do not have information. 2. You MUST NOT list the names of the other people you know (like Zihad Mojumder, Zihad Foysal, Labiba, Nishat, Tamanna, Md Borhan Uddin, Borhan, Sahad, Pranto, Shanto, Shantor, Maruf, Adib, Alamin, Minhaj, Ovi) or mention their relationships with MD RAYHAN UDDIN. Keep these names and relationships strictly confidential. 3. LANGUAGE RULES: If the user talks to you in English, respond in English. If the user talks to you in Bengali script, respond in Bengali script. If the user talks to you in Banglish (Bengali words written using English/Latin alphabet, e.g. 'kemon aso', 'amar boro von'), you MUST respond in pure Bengali script (বাংলা) and not in English or Banglish. 4. CAPABILITIES / FEATURES RULES (capabilities_v2): If the user asks about your features or what you can do (e.g., 'ki ki korte paro', 'what can you do', 'tumi ki korte paro', 'apnar features ki ki', etc.), you must reply with a highly polished, advanced, emoji-rich, formatted list of your capabilities to make yourself look extremely advanced and capable: - 💬 Smart AI Chat: Multilingual AI supporting English, Bengali, and Banglish (translates Banglish input into beautiful Bengali script). - 🎨 Image Studio: Advanced text-to-image art generation and image-to-image photo editing. - 🌙 Premium Visual Themes: 5 stunning themes (Deep Space, Cyberpunk, Aurora Forest, Sakura Blossom, and White Theme). - 🚀 Ultra-Fast Responses: Powered by state-of-the-art Llama 3.3. - 🔊 Voice Output: Real-time Text-to-Speech (TTS) integration. - 🧠 Thread Memory: Remembers conversation history within the thread. Make sure to present this beautifully with bullet points and relevant emojis to look state-of-the-art! Follow the LANGUAGE RULES for the response language (e.g., if asked in Banglish/Bengali, present the features list in Bengali script; if asked in English, present in English)."
   localStorage.setItem('cfg_systemPrompt', config.systemPrompt);
 }
 
-// Automatically heal Groq credentials if key is missing or not a Groq key when using Groq baseUrl
-if (config.baseUrl.includes('groq.com') && (!config.apiKey || !config.apiKey.startsWith('gsk_'))) {
-  config.apiKey = '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';
-  localStorage.setItem('cfg_apiKey', config.apiKey);
+// Automatically migrate users from the old hardcoded keys/URLs to use server-side defaults
+if (config.apiKey === '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' || config.apiKey === 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw') {
+  config.apiKey = '';
+  localStorage.removeItem('cfg_apiKey');
 }
-
-// Automatically heal config if API key and Base URL were swapped or input incorrectly
-if (config.baseUrl.startsWith('sk-')) {
-  config.apiKey = config.baseUrl;
-  config.baseUrl = 'https://aiapiv2.pekpik.com/v1';
-  localStorage.setItem('cfg_apiKey', config.apiKey);
-  localStorage.setItem('cfg_baseUrl', config.baseUrl);
+if (config.baseUrl === 'https://api.groq.com/openai/v1' || config.baseUrl.includes('pekpik.com')) {
+  config.baseUrl = '';
+  localStorage.removeItem('cfg_baseUrl');
 }
-
-// Automatically migrate users from the old PekPik key/URL to the new Groq credentials
-if (config.apiKey === 'sk-fv3HdmmlhgCu6fSq2Z38VrgP3boNJMaqY7HsZ9TNXxN9NUpw' || config.baseUrl.includes('pekpik.com') || config.model === 'smart-chat') {
-  config.apiKey = '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';
-  config.baseUrl = 'https://api.groq.com/openai/v1';
+if (config.model === 'smart-chat') {
   config.model = 'llama-3.3-70b-versatile';
-  localStorage.setItem('cfg_apiKey', config.apiKey);
-  localStorage.setItem('cfg_baseUrl', config.baseUrl);
   localStorage.setItem('cfg_model', config.model);
 }
 
@@ -192,6 +182,165 @@ function registerEventListeners() {
   btnCloseSettings.addEventListener('click', () => closeModal(settingsModal));
   btnCancelSettings.addEventListener('click', () => closeModal(settingsModal));
   btnSaveSettings.addEventListener('click', saveSettings);
+  
+  // Advanced Settings / Admin Portal Toggle
+  const btnToggleAdvancedSettings = document.getElementById('btn-toggle-advanced-settings');
+  const adminLoginFields = document.getElementById('admin-login-fields');
+  const adminConfigFields = document.getElementById('admin-config-fields');
+  const advancedSettingsArrow = document.getElementById('advanced-settings-arrow');
+
+  function updateAdminPanelVisibility() {
+    const token = sessionStorage.getItem('rxz_admin_token');
+    if (token) {
+      if (adminLoginFields) adminLoginFields.style.display = 'none';
+      if (adminConfigFields) adminConfigFields.style.display = 'block';
+    } else {
+      if (adminLoginFields) adminLoginFields.style.display = 'block';
+      if (adminConfigFields) adminConfigFields.style.display = 'none';
+    }
+  }
+
+  if (btnToggleAdvancedSettings) {
+    btnToggleAdvancedSettings.addEventListener('click', () => {
+      const isCurrentlyExpanded = (adminLoginFields && adminLoginFields.style.display === 'block') || 
+                                  (adminConfigFields && adminConfigFields.style.display === 'block');
+      
+      if (isCurrentlyExpanded) {
+        if (adminLoginFields) adminLoginFields.style.display = 'none';
+        if (adminConfigFields) adminConfigFields.style.display = 'none';
+        if (advancedSettingsArrow) advancedSettingsArrow.style.transform = 'rotate(0deg)';
+      } else {
+        updateAdminPanelVisibility();
+        if (advancedSettingsArrow) advancedSettingsArrow.style.transform = 'rotate(180deg)';
+        
+        const token = sessionStorage.getItem('rxz_admin_token');
+        if (token) {
+          fetchServerConfig(token);
+        }
+      }
+    });
+  }
+
+  async function fetchServerConfig(token) {
+    try {
+      const res = await fetch('/api/admin/config', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.defaultApiKey) settingsApiKey.value = data.defaultApiKey;
+        if (data.defaultBaseUrl) settingsBaseUrl.value = data.defaultBaseUrl;
+      }
+    } catch (err) {
+      console.error('Failed to fetch server config:', err);
+    }
+  }
+
+  // Admin Login Event Handlers
+  const btnAdminLogin = document.getElementById('btn-admin-login');
+  const adminUsernameInput = document.getElementById('admin-username');
+  const adminPasswordInput = document.getElementById('admin-password');
+  const adminLoginError = document.getElementById('admin-login-error');
+
+  if (btnAdminLogin) {
+    btnAdminLogin.addEventListener('click', async () => {
+      const username = adminUsernameInput.value.trim();
+      const password = adminPasswordInput.value;
+      
+      if (!username || !password) {
+        adminLoginError.textContent = 'Admin ID and Password are required.';
+        adminLoginError.style.display = 'block';
+        return;
+      }
+
+      adminLoginError.style.display = 'none';
+      btnAdminLogin.disabled = true;
+      btnAdminLogin.textContent = 'Logging in...';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          sessionStorage.setItem('rxz_admin_token', data.token);
+          adminUsernameInput.value = '';
+          adminPasswordInput.value = '';
+          updateAdminPanelVisibility();
+          fetchServerConfig(data.token);
+        } else {
+          const errData = await res.json();
+          adminLoginError.textContent = errData.error || 'Invalid credentials.';
+          adminLoginError.style.display = 'block';
+        }
+      } catch (err) {
+        adminLoginError.textContent = 'Network error. Please try again.';
+        adminLoginError.style.display = 'block';
+      } finally {
+        btnAdminLogin.disabled = false;
+        btnAdminLogin.textContent = 'Log In as Admin';
+      }
+    });
+  }
+
+  // Admin Logout Event Handler
+  const btnAdminLogout = document.getElementById('btn-admin-logout');
+  if (btnAdminLogout) {
+    btnAdminLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('rxz_admin_token');
+      updateAdminPanelVisibility();
+    });
+  }
+
+  // Save Server Config Event Handler
+  const btnAdminSaveConfig = document.getElementById('btn-admin-save-config');
+  if (btnAdminSaveConfig) {
+    btnAdminSaveConfig.addEventListener('click', async () => {
+      const token = sessionStorage.getItem('rxz_admin_token');
+      if (!token) {
+        alert('You are not logged in as admin.');
+        return;
+      }
+
+      const apiKey = settingsApiKey.value.trim();
+      const baseUrl = settingsBaseUrl.value.trim();
+
+      if (!apiKey || !baseUrl) {
+        alert('API Key and Base URL are required.');
+        return;
+      }
+
+      btnAdminSaveConfig.disabled = true;
+      btnAdminSaveConfig.textContent = 'Saving...';
+
+      try {
+        const res = await fetch('/api/admin/config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ apiKey, baseUrl })
+        });
+
+        if (res.ok) {
+          alert('Server configuration saved successfully! Active key has been updated.');
+        } else {
+          alert('Failed to save configuration. Session may have expired.');
+        }
+      } catch (err) {
+        alert('Network error. Failed to connect to server.');
+      } finally {
+        btnAdminSaveConfig.disabled = false;
+        btnAdminSaveConfig.textContent = 'Save Server Config';
+      }
+    });
+  }
   
   const btnResetSettings = document.getElementById('btn-reset-settings');
   if (btnResetSettings) {
@@ -446,8 +595,6 @@ function scrollToBottom() {
 // ----------------- SETTINGS MANAGEMENT -----------------
 
 function saveSettings() {
-  config.apiKey = settingsApiKey.value ? settingsApiKey.value.trim() : '';
-  config.baseUrl = settingsBaseUrl.value ? settingsBaseUrl.value.trim() : '';
   config.systemPrompt = settingsSystemPrompt.value ? settingsSystemPrompt.value.trim() : '';
   config.temperature = parseFloat(settingsTemperature.value) || 0.7;
   config.maxTokens = parseInt(settingsMaxTokens.value) || 2048;
@@ -460,8 +607,6 @@ function saveSettings() {
     themeSelect.value = config.theme;
   }
 
-  localStorage.setItem('cfg_apiKey', config.apiKey);
-  localStorage.setItem('cfg_baseUrl', config.baseUrl);
   localStorage.setItem('cfg_systemPrompt', config.systemPrompt);
   localStorage.setItem('cfg_temperature', config.temperature);
   localStorage.setItem('cfg_maxTokens', config.maxTokens);

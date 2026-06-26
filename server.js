@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -8,9 +9,44 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Pre-configured default credentials
-const DEFAULT_API_KEY = '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';
-const DEFAULT_BASE_URL = 'https://api.groq.com/openai/v1';
+const CONFIG_PATH = path.join(__dirname, 'server_config.json');
+let memoryConfig = null;
+
+function loadServerConfig() {
+  if (memoryConfig) return memoryConfig;
+
+  try {
+    if (fs.existsSync(CONFIG_PATH)) {
+      const data = fs.readFileSync(CONFIG_PATH, 'utf8');
+      memoryConfig = JSON.parse(data);
+      return memoryConfig;
+    }
+  } catch (err) {
+    console.error('Error reading server_config.json:', err);
+  }
+
+  memoryConfig = {
+    adminUsername: 'admin',
+    adminPassword: 'adminpassword123',
+    defaultApiKey: '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',
+    defaultBaseUrl: 'https://api.groq.com/openai/v1'
+  };
+
+  saveServerConfig(memoryConfig);
+  return memoryConfig;
+}
+
+function saveServerConfig(config) {
+  memoryConfig = config;
+  try {
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('Could not write server_config.json to disk:', err.message);
+  }
+}
+
+// Initialize config on startup
+loadServerConfig();
 
 app.use(express.json());
 
@@ -19,8 +55,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Helper to determine active credentials
 function getCredentials(req) {
-  let apiKey = req.headers['x-api-key'] || DEFAULT_API_KEY;
-  let baseUrl = req.headers['x-base-url'] || DEFAULT_BASE_URL;
+  const currentConfig = loadServerConfig();
+  let apiKey = req.headers['x-api-key'] || currentConfig.defaultApiKey;
+  let baseUrl = req.headers['x-base-url'] || currentConfig.defaultBaseUrl;
 
   // Clean base URL to remove trailing slashes
   if (baseUrl && baseUrl.endsWith('/')) {
@@ -28,7 +65,7 @@ function getCredentials(req) {
   }
 
   // Automatic routing for Gemini keys
-  if (apiKey && apiKey.startsWith('AIzaSy') && (!baseUrl || baseUrl === DEFAULT_BASE_URL || baseUrl.includes('groq.com') || baseUrl.includes('pekpik.com'))) {
+  if (apiKey && apiKey.startsWith('AIzaSy') && (!baseUrl || baseUrl === currentConfig.defaultBaseUrl || baseUrl.includes('groq.com') || baseUrl.includes('pekpik.com'))) {
     baseUrl = 'https://generativelanguage.googleapis.com/v1beta/openai';
   }
 
@@ -197,6 +234,56 @@ app.post('/api/image', async (req, res) => {
     const fallbackUrl = `https://image.pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${Math.floor(Math.random() * 1000000)}`;
     res.json({ data: [{ url: fallbackUrl }] });
   }
+});
+
+// Admin login and config endpoints
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  const currentConfig = loadServerConfig();
+
+  if (username === currentConfig.adminUsername && password === currentConfig.adminPassword) {
+    const token = Buffer.from(`${username}:${password}`).toString('base64');
+    return res.json({ success: true, token });
+  }
+
+  return res.status(401).json({ error: 'Invalid admin username or password.' });
+});
+
+function validateAdminToken(req) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false;
+  }
+  const token = authHeader.split(' ')[1];
+  const currentConfig = loadServerConfig();
+  const expectedToken = Buffer.from(`${currentConfig.adminUsername}:${currentConfig.adminPassword}`).toString('base64');
+  return token === expectedToken;
+}
+
+app.get('/api/admin/config', (req, res) => {
+  if (!validateAdminToken(req)) {
+    return res.status(403).json({ error: 'Access denied.' });
+  }
+  const currentConfig = loadServerConfig();
+  res.json({
+    defaultApiKey: currentConfig.defaultApiKey,
+    defaultBaseUrl: currentConfig.defaultBaseUrl
+  });
+});
+
+app.post('/api/admin/config', (req, res) => {
+  if (!validateAdminToken(req)) {
+    return res.status(403).json({ error: 'Access denied.' });
+  }
+  const { apiKey, baseUrl } = req.body;
+  if (!apiKey || !baseUrl) {
+    return res.status(400).json({ error: 'API Key and Base URL are required.' });
+  }
+  const currentConfig = loadServerConfig();
+  currentConfig.defaultApiKey = apiKey;
+  currentConfig.defaultBaseUrl = baseUrl;
+  saveServerConfig(currentConfig);
+  res.json({ success: true });
 });
 
 // Fallback: serve index.html for all other routes

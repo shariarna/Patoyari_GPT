@@ -174,25 +174,73 @@
             </select>
           </div>
 
-          <!-- Hidden complex settings (kept for JS compatibility) -->
-          <div style="display: none;">
-            <input type="password" id="settings-api-key">
-            <input type="text" id="settings-base-url">
-            <textarea id="settings-system-prompt"></textarea>
-            <input type="number" id="settings-temperature">
-            <input type="number" id="settings-max-tokens">
-            <select id="settings-tts-voice">
-              <option value="alloy">Alloy</option>
-              <option value="echo">Echo</option>
-              <option value="fable">Fable</option>
-              <option value="onyx">Onyx</option>
-              <option value="nova">Nova</option>
-              <option value="shimmer">Shimmer</option>
-            </select>
+          <!-- Admin Panel Section -->
+          <div class="advanced-settings-container" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
+            <div id="btn-toggle-advanced-settings" class="advanced-settings-header" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 12px 0; font-weight: 500; color: var(--text-secondary); user-select: none;">
+              <span><i class="fas fa-lock" style="margin-right: 6px;"></i> Admin Portal</span>
+              <i id="advanced-settings-arrow" class="fas fa-chevron-down" style="font-size: 12px; transition: transform 0.2s ease;"></i>
+            </div>
+            
+            <!-- 1. Admin Login Fields (Hidden by default, shown if toggle expanded and not logged in) -->
+            <div id="admin-login-fields" style="display: none; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); margin-bottom: 10px;">
+              <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Login as Admin to configure the site-wide default API Key and Base URL.</p>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="admin-username">Admin ID</label>
+                <input type="text" id="admin-username" class="form-input" placeholder="Enter admin username">
+              </div>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" class="form-input" placeholder="Enter admin password">
+              </div>
+              <div id="admin-login-error" style="color: #ef4444; font-size: 12px; margin-bottom: 12px; display: none;"></div>
+              <button id="btn-admin-login" class="btn-modal-action save" style="width: 100%; border-radius: 6px; padding: 10px; font-weight: 500; cursor: pointer; border: none; background: var(--accent-color); color: white;">Log In as Admin</button>
+            </div>
+
+            <!-- 2. Admin Config Fields (Hidden by default, shown only if logged in) -->
+            <div id="admin-config-fields" style="display: none; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); margin-bottom: 10px;">
+              <p style="font-size: 12px; color: #10b981; margin-bottom: 12px; font-weight: 500;"><i class="fas fa-check-circle"></i> Logged in as Admin</p>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="settings-api-key">Website Default API Key</label>
+                <input type="password" id="settings-api-key" class="form-input" placeholder="Enter new server-side API key">
+              </div>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="settings-base-url">Website Default Base URL</label>
+                <input type="text" id="settings-base-url" class="form-input" placeholder="https://api.groq.com/openai/v1">
+              </div>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="settings-system-prompt">System Instruction</label>
+                <textarea id="settings-system-prompt" class="form-input" style="height: 80px; resize: vertical; font-size: 12px; line-height: 1.4;"></textarea>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div class="form-group">
+                  <label for="settings-temperature">Temperature</label>
+                  <input type="number" id="settings-temperature" class="form-input" min="0" max="2" step="0.1">
+                </div>
+                <div class="form-group">
+                  <label for="settings-max-tokens">Max Tokens</label>
+                  <input type="number" id="settings-max-tokens" class="form-input">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="settings-tts-voice">TTS Voice</label>
+                <select id="settings-tts-voice" class="form-input">
+                  <option value="alloy">Alloy</option>
+                  <option value="echo">Echo</option>
+                  <option value="fable">Fable</option>
+                  <option value="onyx">Onyx</option>
+                  <option value="nova">Nova</option>
+                  <option value="shimmer">Shimmer</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="btn-admin-logout" class="btn-modal-action cancel" style="flex: 1; border-radius: 6px; padding: 10px; font-weight: 500; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--text-primary);">Log Out</button>
+                <button id="btn-admin-save-config" class="btn-modal-action save" style="flex: 1; border-radius: 6px; padding: 10px; font-weight: 500; cursor: pointer; border: none; background: var(--accent-color); color: white;">Save Server Config</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button id="btn-reset-settings" class="btn-modal-action" style="background: #e11d48; color: white; border: none; border-radius: 6px; padding: 10px 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; margin-right: auto; display: none;">Reset Defaults</button>
+          <button id="btn-reset-settings" class="btn-modal-action" style="background: #e11d48; color: white; border: none; border-radius: 6px; padding: 10px 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; margin-right: auto; display: block;">Reset Defaults</button>
           <button id="btn-cancel-settings" class="btn-modal-action cancel">Cancel</button>
           <button id="btn-save-settings" class="btn-modal-action save">Save Configurations</button>
         </div>
