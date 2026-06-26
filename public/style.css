@@ -104,6 +104,7 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
   transition: background-color var(--transition-speed), color var(--transition-speed);
@@ -122,6 +123,7 @@ button, input, textarea, select {
   display: flex;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
 }
 
@@ -1813,7 +1815,7 @@ body.theme-glass .chat-history-list::-webkit-scrollbar-thumb {
   }
 
   .input-panel-wrapper {
-    padding: 0 10px 10px 10px !important;
+    padding: 0 10px calc(10px + env(safe-area-inset-bottom)) 10px !important;
   }
 
   .input-panel {
