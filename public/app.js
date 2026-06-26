@@ -6,6 +6,7 @@ let isGenerating = false; // Track active API call
 
 // DOM Elements
 const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
 const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
 const btnCloseSidebarMobile = document.getElementById('btn-close-sidebar-mobile');
 const btnNewChat = document.getElementById('btn-new-chat');
@@ -174,13 +175,24 @@ function init() {
 // Event Listeners Registration
 function registerEventListeners() {
   // Sidebar toggles
-  btnToggleSidebar.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-  btnCloseSidebarMobile.addEventListener('click', () => sidebar.classList.remove('active'));
   btnToggleSidebar.addEventListener('click', () => {
     if (window.innerWidth <= 768) {
       sidebar.classList.add('active');
+      if (sidebarOverlay) sidebarOverlay.classList.add('active');
+    } else {
+      sidebar.classList.toggle('collapsed');
     }
   });
+  btnCloseSidebarMobile.addEventListener('click', () => {
+    sidebar.classList.remove('active');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+  });
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+  }
 
   // Settings triggers
   btnSidebarSettings.addEventListener('click', () => openModal(settingsModal));
@@ -650,6 +662,7 @@ function createNewChat() {
   chatTextarea.focus();
   if (window.innerWidth <= 768) {
     sidebar.classList.remove('active');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
   }
 }
 
@@ -679,6 +692,7 @@ function selectChat(id) {
   
   if (window.innerWidth <= 768) {
     sidebar.classList.remove('active');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
   }
 }
 

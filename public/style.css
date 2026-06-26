@@ -1754,8 +1754,101 @@ body.theme-glass .chat-history-list::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.08);
 }
 
-/* Mobile responsive glass theme overrides */
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 95;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Mobile responsive layout optimizations */
 @media (max-width: 768px) {
+  .chat-header {
+    height: 56px !important;
+    padding: 0 12px !important;
+  }
+  
+  .btn-sidebar-toggle {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 6px !important;
+  }
+  
+  .app-title {
+    font-size: 15px !important;
+  }
+
+  .messages-container {
+    padding: 12px 10px 76px 10px !important;
+    gap: 12px !important;
+  }
+
+  .message-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11px !important;
+  }
+
+  .message-bubble {
+    padding: 9px 12px !important;
+    font-size: 13.5px !important;
+    border-radius: 14px !important;
+  }
+
+  .input-panel-wrapper {
+    padding: 0 10px 10px 10px !important;
+  }
+
+  .input-panel {
+    padding: 5px 8px !important;
+    border-radius: 14px !important;
+    gap: 6px !important;
+  }
+
+  .chat-textarea {
+    font-size: 13.5px !important;
+    padding: 5px 3px !important;
+  }
+
+  .input-action-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+  }
+  
+  .welcome-logo {
+    font-size: 28px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .welcome-screen h2 {
+    font-size: 18px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .welcome-screen p {
+    font-size: 12.5px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Specific mobile overrides for Glass theme */
   body.theme-glass .sidebar {
     background-color: rgba(255, 255, 255, 0.28);
     box-shadow: 4px 0 20px rgba(99, 102, 241, 0.08);
@@ -1768,7 +1861,7 @@ body.theme-glass .chat-history-list::-webkit-scrollbar-thumb {
   }
 
   body.theme-glass .chat-header {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.22);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
   }
@@ -1781,8 +1874,8 @@ body.theme-glass .chat-history-list::-webkit-scrollbar-thumb {
   
   body.theme-glass::before,
   body.theme-glass::after {
-    filter: blur(60px); /* Lower blur on mobile for rendering performance */
-    width: 65vw;
-    height: 65vw;
+    filter: blur(55px);
+    width: 60vw;
+    height: 60vw;
   }
 }
