@@ -115,7 +115,7 @@ if (config.model === 'llama-3.3-70b-specdec' || config.model !== 'llama-3.3-70b-
 }
 
 // Automatically migrate users from deleted themes to the default 'space' theme
-if (config.theme !== 'space' && config.theme !== 'light' && config.theme !== 'cyberpunk' && config.theme !== 'aurora' && config.theme !== 'sakura') {
+if (config.theme !== 'space' && config.theme !== 'light' && config.theme !== 'cyberpunk' && config.theme !== 'aurora' && config.theme !== 'sakura' && config.theme !== 'glass') {
   config.theme = 'space';
   localStorage.setItem('cfg_theme', config.theme);
 }
@@ -139,7 +139,13 @@ function init() {
   settingsMaxTokens.value = config.maxTokens || 2048;
   settingsTtsVoice.value = config.ttsVoice || 'alloy';
   if (settingsAppTheme) {
-    settingsAppTheme.value = config.theme === 'light' ? 'light' : 'space';
+    if (config.theme === 'light') {
+      settingsAppTheme.value = 'light';
+    } else if (config.theme === 'glass') {
+      settingsAppTheme.value = 'glass';
+    } else {
+      settingsAppTheme.value = 'space';
+    }
   }
 
   // Set initial model dropdown in header
@@ -468,7 +474,13 @@ function registerEventListeners() {
     localStorage.setItem('cfg_theme', config.theme);
     applyTheme(config.theme);
     if (settingsAppTheme) {
-      settingsAppTheme.value = config.theme === 'light' ? 'light' : 'space';
+      if (config.theme === 'light') {
+        settingsAppTheme.value = 'light';
+      } else if (config.theme === 'glass') {
+        settingsAppTheme.value = 'glass';
+      } else {
+        settingsAppTheme.value = 'space';
+      }
     }
   });
 
